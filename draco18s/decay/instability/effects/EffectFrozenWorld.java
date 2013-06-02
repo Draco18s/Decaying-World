@@ -71,7 +71,7 @@ public class EffectFrozenWorld implements IEnvironmentalEffect
                                 e.attackEntityFrom(new ColdDamage(), (worldObj.isRaining() ? 2 : 1));
                             }
                             nbt.setInteger("TemperatureTimer", timer);
-                            
+
                             if (e instanceof EntityPlayer)
                             {
                                 ByteArrayOutputStream bt = new ByteArrayOutputStream();

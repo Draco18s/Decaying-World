@@ -9,14 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemLifeBomb extends Item {
-
 	public ItemLifeBomb(int par1) {
 		super(par1);
         maxStackSize = 16;
         setCreativeTab(CreativeTabs.tabMisc);
         setUnlocalizedName("Life Bomb");
 	}
-	
+
 	@Override
 	public void registerIcons(IconRegister par1IconRegister)
     {

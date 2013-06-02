@@ -56,7 +56,7 @@ public class EntityTreant extends EntityGolem
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 16.0F, 0, false));
     }
-    
+
     @Override
     public void knockBack(Entity par1Entity, int par2, double par3, double par5)
     {

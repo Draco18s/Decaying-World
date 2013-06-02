@@ -39,7 +39,7 @@ public class ChaosDecay extends BaseFogDecay
         setTickRandomly(true);
         setCreativeTab(CreativeTabs.tabBlock);
     }
-    
+
     public void setupIDs() {
     	for(int v=0; v < 5; v++){
 			validIDs.add((short)1);
@@ -96,7 +96,7 @@ public class ChaosDecay extends BaseFogDecay
     {
         blockIcon = iconRegister.registerIcon("DecayingWorld:chaos");
     }
-    
+
     public void spread(World world, int x, int y, int z, Random random)
     {
         if (!world.isRemote)
@@ -226,7 +226,7 @@ public class ChaosDecay extends BaseFogDecay
     		world.setBlock(x, y-1, z, blockID);
     	}*/
     }
-    
+
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, int block) { }
 

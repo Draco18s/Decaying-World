@@ -48,7 +48,7 @@ public class DeathCrystal extends BlockContainer
         setHardness(2.0F);
         setResistance(5.0F);
     }
-    
+
     @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
@@ -67,7 +67,7 @@ public class DeathCrystal extends BlockContainer
     {
         return true;
     }
-    
+
     public int idDropped(int par1, Random par2Random, int par3)
     {
         return DecayingWorld.deathShard.itemID;
@@ -99,7 +99,7 @@ public class DeathCrystal extends BlockContainer
 		                	DeathCryEnt cry = (DeathCryEnt)te;
 		                	cry.expCount++;
 		                }
-		                
+
 		                if(e instanceof EntityPlayer) {
 		            		EntityPlayer player = (EntityPlayer)e;
 		            		System.out.println("Total exp: " + player.experienceTotal);
@@ -115,7 +115,7 @@ public class DeathCrystal extends BlockContainer
 	public TileEntity createNewTileEntity(World world) {
 		return new DeathCryEnt();
 	}
-	
+
 	@Override
 	public void breakBlock(World worldObj, int x, int y, int z, int par5, int par6)
     {
@@ -128,7 +128,7 @@ public class DeathCrystal extends BlockContainer
         }
         super.breakBlock(worldObj, x, y, z, par5, par6);
     }
-	
+
 	@Override
 	public boolean onBlockActivated(World worldObj, int x, int y, int z, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {

@@ -32,7 +32,7 @@ public class PoisonFogDecay extends BaseFogDecay
         super(par1);
         setUnlocalizedName("Poison Fog");
     }
-    
+
     @Override
     public void registerIcons(IconRegister iconRegister)
     {

@@ -113,7 +113,7 @@ public class OverhealGUI implements ITickHandler
             else {
             	flag = 0;
             }
-            
+
             if(thisFreezeTimer > lastFreezeTimer) {
             	lastFreezeTimer = thisFreezeTimer;
             }

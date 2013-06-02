@@ -19,19 +19,16 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 
 public class EntityLifeBomb extends EntityThrowable implements IThrowableEntity {
-
-
 	public EntityLifeBomb(World par1World, EntityLiving par2EntityLiving) {
 		super(par1World, par2EntityLiving);
 	}
-	
+
 	public EntityLifeBomb(World par1World) {
 		super(par1World);
 	}
 
 	@Override
 	public void setThrower(Entity entity) {
-
 	}
 
 	@Override
@@ -48,16 +45,16 @@ public class EntityLifeBomb extends EntityThrowable implements IThrowableEntity 
 		else {
 			AxisAlignedBB axisalignedbb = this.boundingBox.expand(4.0D, 2.0D, 4.0D);
 	        List list1 = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, axisalignedbb);
-	
+
 	        if (list1 != null && !list1.isEmpty())
 	        {
 	            Iterator iterator = list1.iterator();
-	
+
 	            while (iterator.hasNext())
 	            {
 	                EntityLiving entityliving = (EntityLiving)iterator.next();
 	                double d0 = this.getDistanceSqToEntity(entityliving);
-	
+
 	                if (d0 < 16.0D)
 	                {
 	                    double d1 = 1.0D - Math.sqrt(d0) / 4.0D;

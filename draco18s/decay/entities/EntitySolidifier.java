@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 
 public class EntitySolidifier extends EntityThrowable implements IThrowableEntity {
-
 	public EntitySolidifier(World par1World, EntityLiving par2EntityLiving) {
 		super(par1World, par2EntityLiving);
 	}
@@ -24,7 +23,7 @@ public class EntitySolidifier extends EntityThrowable implements IThrowableEntit
 	public EntitySolidifier(World par1World) {
 		super(par1World);
 	}
-	
+
 	@Override
 	public void setThrower(Entity entity) {
 	}

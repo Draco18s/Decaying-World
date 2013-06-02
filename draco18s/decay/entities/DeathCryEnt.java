@@ -23,7 +23,7 @@ public class DeathCryEnt extends TileEntity
         tc.setInteger("ExpCount", expCount);
         tc.setInteger("Delay", delay);
     }
-    
+
     @Override
     public void updateEntity() {
     	if(delay > 0)

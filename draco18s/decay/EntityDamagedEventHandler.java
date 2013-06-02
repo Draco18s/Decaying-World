@@ -70,7 +70,7 @@ public class EntityDamagedEventHandler
             }
         }
     }
-    
+
     @ForgeSubscribe
     public void EntityUpdate(LivingEvent event){
     	EntityLiving ent = event.entityLiving;

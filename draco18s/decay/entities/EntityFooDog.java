@@ -2,15 +2,13 @@ package draco18s.decay.entities;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockCloth;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIBeg;
-import net.minecraft.entity.ai.EntityAICreeperSwell;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
@@ -19,12 +17,13 @@ import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
+import net.minecraft.entity.ai.EntityAISit;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityOcelot;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.Item;
@@ -32,15 +31,13 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 
-public class EntityBlinkDog extends EntityMob
+public class EntityFooDog extends EntityTameable
 {
     private float field_70926_e;
     private float field_70924_f;
@@ -49,29 +46,35 @@ public class EntityBlinkDog extends EntityMob
     private boolean isShaking;
     private boolean field_70928_h;
 
+    private boolean isSitting = false;
+    private EntityAIBase wanderTaskA = new EntityAIWander(this, 0.28F);
+    private EntityAIBase attackTaskA = new EntityAIAttackOnCollide(this, 0.28F, true);
+    private EntityAIBase wanderTaskB = new EntityAIWander(this, 0.19F);
+    private EntityAIBase attackTaskB = new EntityAIAttackOnCollide(this, 0.19F, true);
+    private EntityAIBase leapTask = new EntityAILeapAtTarget(this, 0.4F);
+
     /**
      * This time increases while wolf is shaking and emitting water particles.
      */
     private float timeWolfIsShaking;
     private float prevTimeWolfIsShaking;
-    private boolean tpknockback;
 
-    public EntityBlinkDog(World par1World)
+    public EntityFooDog(World par1World)
     {
         super(par1World);
-        this.texture = "/mods/DecayingWorld/textures/mob/blinkdog.png";
+        this.texture = "/mods/DecayingWorld/textures/mob/foodog.png";
         this.setSize(0.6F, 0.8F);
-        this.moveSpeed = 0.3F;
+        this.moveSpeed = 0.28F;
         this.getNavigator().setAvoidsWater(true);
         this.tasks.addTask(1, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
-        this.tasks.addTask(3, new EntityAIAttackOnCollide(this, this.moveSpeed, true));
-        this.tasks.addTask(4, new EntityAIWander(this, this.moveSpeed));
+        //this.tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
+        //this.tasks.addTask(3, new EntityAIAttackOnCollide(this, this.moveSpeed, true));
+        //this.tasks.addTask(4, new EntityAIWander(this, this.moveSpeed));
         this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(6, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
-        tpknockback = false;
+        setAngry(false);
     }
 
     /**
@@ -87,7 +90,18 @@ public class EntityBlinkDog extends EntityMob
      */
     public void setAttackTarget(EntityLiving par1EntityLiving)
     {
-        super.setAttackTarget(par1EntityLiving);
+    	if(isStone() == 3) {
+    		System.out.println("Lost stone form");
+    		setStone(1);
+    		this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
+    		this.moveSpeed = 0.28F;
+            this.tasks.addTask(2, leapTask);
+            this.tasks.addTask(3, attackTaskA);
+            this.tasks.addTask(4, wanderTaskA);
+    	}
+    	setAngry(true);
+    	setSitting(false);
+    	super.setAttackTarget(par1EntityLiving);
     }
 
     /**
@@ -107,6 +121,7 @@ public class EntityBlinkDog extends EntityMob
     {
         super.entityInit();
         this.dataWatcher.addObject(18, new Integer(this.getHealth()));
+        this.dataWatcher.addObject(20, new Byte((byte)3));
     }
 
     /**
@@ -124,7 +139,16 @@ public class EntityBlinkDog extends EntityMob
      */
     public String getTexture()
     {
-        return this.texture;
+    	int s = isStone();
+    	if(s >= 3) {
+    		return "/mods/DecayingWorld/textures/mob/statuedog.png";
+    	}
+    	else if(s == 2) {
+    		return "/mods/DecayingWorld/textures/mob/stonedog.png";
+    	}
+    	else {
+    		return super.getTexture(); //foodog.png
+    	}
     }
 
     /**
@@ -133,6 +157,8 @@ public class EntityBlinkDog extends EntityMob
     public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeEntityToNBT(par1NBTTagCompound);
+        par1NBTTagCompound.setBoolean("Angry", this.isAngry());
+        par1NBTTagCompound.setInteger("Stoneform", isStone());
     }
 
     /**
@@ -141,6 +167,22 @@ public class EntityBlinkDog extends EntityMob
     public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readEntityFromNBT(par1NBTTagCompound);
+        this.setAngry(par1NBTTagCompound.getBoolean("Angry"));
+        setStone(par1NBTTagCompound.getInteger("Stoneform"));
+        switch(isStone()) {
+        	case 0:
+        		setStone(3);
+        	case 1:
+	            this.tasks.addTask(2, leapTask);
+	            this.tasks.addTask(3, attackTaskA);
+	            this.tasks.addTask(4, wanderTaskA);
+        		break;
+        	case 2:
+	            this.tasks.addTask(2, leapTask);
+	            this.tasks.addTask(3, attackTaskB);
+	            this.tasks.addTask(4, wanderTaskB);
+        		break;
+        }
     }
 
     /**
@@ -148,7 +190,7 @@ public class EntityBlinkDog extends EntityMob
      */
     protected boolean canDespawn()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -180,7 +222,7 @@ public class EntityBlinkDog extends EntityMob
      */
     protected float getSoundVolume()
     {
-        return 0.4F;
+        return (isStone() > 2) ? 0.0F : 0.4F;
     }
 
     /**
@@ -199,18 +241,59 @@ public class EntityBlinkDog extends EntityMob
     {
         super.onLivingUpdate();
 
-        if (!this.worldObj.isRemote)
+        if (!this.worldObj.isRemote && this.isShaking && !this.field_70928_h && !this.hasPath() && this.onGround)
         {
-        	if(this.isShaking && !this.field_70928_h && !this.hasPath() && this.onGround) {
-	            this.field_70928_h = true;
-	            this.timeWolfIsShaking = 0.0F;
-	            this.prevTimeWolfIsShaking = 0.0F;
-	            this.worldObj.setEntityState(this, (byte)8);
-        	}
-        	else if (this.rand.nextDouble() < 0.0025)
-            {
-                this.teleportRandomly();
-            }
+            this.field_70928_h = true;
+            this.timeWolfIsShaking = 0.0F;
+            this.prevTimeWolfIsShaking = 0.0F;
+            this.worldObj.setEntityState(this, (byte)8);
+        }
+        if(this.isPotionActive(Potion.poison)) {
+        	this.curePotionEffects(new ItemStack(Item.bucketMilk));
+        }
+        if(this.entityToAttack == null && this.findPlayerToAttack() == null) {
+        	setAngry(false);
+        }
+        switch(isStone()) {
+        	case 1:
+	        	this.moveSpeed = 0.28F;
+	        	//this.addPotionEffect(new PotionEffect(Potion.resistance.getId(), 10, 0));
+	        	if(getHealth() <= getMaxHealth() / 2) {
+	        		setStone(2);
+		    		this.tasks.removeTask(wanderTaskA);
+		    		this.tasks.removeTask(attackTaskA);
+		            this.tasks.addTask(3, attackTaskB);
+		            this.tasks.addTask(4, wanderTaskB);
+	            }
+	        	break;
+        	case 2:
+            	this.moveSpeed = 0.19F;
+            	this.addPotionEffect(new PotionEffect(Potion.resistance.getId(), 10, 3));
+            	if(getHealth() == getMaxHealth()) {
+            		setStone(1);
+		    		this.tasks.removeTask(wanderTaskB);
+		    		this.tasks.removeTask(attackTaskB);
+		            this.tasks.addTask(3, attackTaskA);
+		            this.tasks.addTask(4, wanderTaskA);
+	            }
+            	break;
+        	case 3:
+            	this.moveSpeed = 0.0F;
+            	break;
+        }
+        if(!isAngry() && isStone() < 3) {
+	        NBTTagCompound nbt = this.getEntityData();
+	    	if(nbt.getInteger("HealthOverflow") >= getMaxHealth()*2-1) {
+	    		System.out.println("Gained stone form");
+	    		setStone(3);
+	    		this.dataWatcher.updateObject(16, Byte.valueOf((byte)1));
+	            this.tasks.removeTask(leapTask);
+	    		this.tasks.removeTask(wanderTaskA);
+	    		this.tasks.removeTask(attackTaskA);
+	    		this.tasks.removeTask(wanderTaskB);
+	    		this.tasks.removeTask(attackTaskB);
+	    		this.setPathToEntity((PathEntity)null);
+	    	}
         }
     }
 
@@ -222,14 +305,14 @@ public class EntityBlinkDog extends EntityMob
         super.onUpdate();
         this.field_70924_f = this.field_70926_e;
 
-        if (this.isWet())
+        if (this.isWet() && isStone() == 0)
         {
             this.isShaking = true;
             this.field_70928_h = false;
             this.timeWolfIsShaking = 0.0F;
             this.prevTimeWolfIsShaking = 0.0F;
         }
-        else if ((this.isShaking || this.field_70928_h) && this.field_70928_h)
+        else if (isStone() == 0 && (this.isShaking || this.field_70928_h) && this.field_70928_h)
         {
             if (this.timeWolfIsShaking == 0.0F)
             {
@@ -307,17 +390,30 @@ public class EntityBlinkDog extends EntityMob
     }
 
     /**
-     * The speed it takes to move the entityliving's rotationPitch through the faceEntity method. This is only currently
-     * use in wolves.
+     * Called when the entity is attacked.
      */
-    public int getVerticalFaceSpeed()
+    public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
     {
-        return super.getVerticalFaceSpeed();
+        if (this.isEntityInvulnerable())
+        {
+            return false;
+        }
+        else
+        {
+        	if(isStone() == 3) {
+        		int n = par2 / 2;
+        		if(n == 0) {
+        			n = this.rand.nextInt(2);
+        		}
+        		return super.attackEntityFrom(par1DamageSource, n);
+        	}
+        	return super.attackEntityFrom(par1DamageSource, par2);
+        }
     }
 
     public boolean attackEntityAsMob(Entity par1Entity)
     {
-        int i = 3;
+    	int i = 3;
         return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), i);
     }
 
@@ -347,139 +443,63 @@ public class EntityBlinkDog extends EntityMob
      */
     public int getMaxSpawnedInChunk()
     {
-        return 4;
+        return 2;
     }
 
-    public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
+    /**
+     * Determines whether this wolf is angry or not.
+     */
+    public boolean isAngry()
     {
-        if (this.isEntityInvulnerable())
-        {
-            return false;
-        }
-        else
-        {
-            if(this.rand.nextDouble() < 1F/3F)
-            {
-                if (this.teleportRandomly())
-                {
-                	tpknockback = true;
-                    this.hurtResistantTime += 20;
-                    return false;
-                }
-            	//return false;
-            }
-
-            return super.attackEntityFrom(par1DamageSource, par2);
-        }
+    	//return isAngry;
+        return (this.dataWatcher.getWatchableObjectByte(16) & 2) != 0;
     }
-
-    @Override
-    public void knockBack(Entity par1Entity, int par2, double par3, double par5)
-    {
-    	if(!tpknockback) {
-	        this.isAirBorne = true;
-	        float f = MathHelper.sqrt_double(par3 * par3 + par5 * par5);
-	        float f1 = 0.2F;
-	        this.motionX /= 2.0D;
-	        this.motionY /= 2.0D;
-	        this.motionZ /= 2.0D;
-	        this.motionX -= par3 / (double)f * (double)f1;
-	        this.motionY += (double)f1;
-	        this.motionZ -= par5 / (double)f * (double)f1;
-
-	        if (this.motionY > 0.4000000059604645D)
-	        {
-	            this.motionY = 0.4000000059604645D;
-	        }
+    
+    public int isStone() {
+    	return this.dataWatcher.getWatchableObjectByte(20);
+    }
+    
+    public void setStone(int s) {
+    	this.dataWatcher.updateObject(20, Byte.valueOf((byte)s));
+    	if(s==3) {
+    		setSitting(true);
     	}
-    	tpknockback = false;
     }
 
-    protected boolean teleportRandomly()
+    /**
+     * Sets whether this wolf is angry or not.
+     */
+    public void setAngry(boolean par1)
     {
-    	double r = (this.rand.nextDouble() - 0.5D) * 6.0D;
-    	r += (r < 0 ? -1 : 1);
-        double d0 = this.posX + r;
-        double d1 = this.posY + 4;
-    	r = (this.rand.nextDouble() - 0.5D) * 6.0D;
-    	r += (r < 0 ? -1 : 1);
-        double d2 = this.posZ + r;
-        return this.teleportTo(d0, d1, d2);
+        byte b0 = this.dataWatcher.getWatchableObjectByte(16);
+        setSitting(false);
     }
 
-    protected boolean teleportTo(double par1, double par3, double par5)
+    public void func_70918_i(boolean par1)
     {
-        EnderTeleportEvent event = new EnderTeleportEvent(this, par1, par3, par5, 0);
-        if (MinecraftForge.EVENT_BUS.post(event)){
-            return false;
-        }
+        byte b0 = this.dataWatcher.getWatchableObjectByte(19);
 
-        double d3 = this.posX;
-        double d4 = this.posY;
-        double d5 = this.posZ;
-        this.posX = event.targetX;
-        this.posY = event.targetY;
-        this.posZ = event.targetZ;
-        boolean flag = false;
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.posY);
-        int k = MathHelper.floor_double(this.posZ);
-        int l;
-
-        if (this.worldObj.blockExists(i, j, k))
+        if (par1)
         {
-            boolean flag1 = false;
-
-            while (!flag1 && j > 0)
-            {
-                l = this.worldObj.getBlockId(i, j - 1, k);
-
-                if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement())
-                {
-                    flag1 = true;
-                }
-                else
-                {
-                    --this.posY;
-                    --j;
-                }
-            }
-
-            if (flag1)
-            {
-                this.setPosition(this.posX, this.posY, this.posZ);
-
-                if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
-                {
-                    flag = true;
-                }
-            }
-        }
-
-        if (!flag)
-        {
-            this.setPosition(d3, d4, d5);
-            return false;
+            this.dataWatcher.updateObject(19, Byte.valueOf((byte)1));
         }
         else
         {
-            short short1 = 128;
-
-            for (l = 0; l < short1; ++l)
-            {
-                double d6 = (double)l / ((double)short1 - 1.0D);
-                float f = (this.rand.nextFloat() - 0.5F) * 0.2F;
-                float f1 = (this.rand.nextFloat() - 0.5F) * 0.2F;
-                float f2 = (this.rand.nextFloat() - 0.5F) * 0.2F;
-                double d7 = d3 + (this.posX - d3) * d6 + (this.rand.nextDouble() - 0.5D) * (double)this.width * 2.0D;
-                double d8 = d4 + (this.posY - d4) * d6 + this.rand.nextDouble() * (double)this.height;
-                double d9 = d5 + (this.posZ - d5) * d6 + (this.rand.nextDouble() - 0.5D) * (double)this.width * 2.0D;
-                this.worldObj.spawnParticle("portal", d7, d8, d9, (double)f, (double)f1, (double)f2);
-            }
-
-            this.worldObj.playSoundEffect(d3, d4, d5, "mob.endermen.portal", 1.0F, 1.0F);
-            this.playSound("mob.endermen.portal", 1.0F, 1.0F);
-            return true;
+            this.dataWatcher.updateObject(19, Byte.valueOf((byte)0));
         }
     }
+
+	public boolean isSitting() {
+		return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
+	}
+
+	public int getVerticalFaceSpeed()
+    {
+        return this.isSitting() ? 0 : super.getVerticalFaceSpeed();
+    }
+
+	@Override
+	public EntityAgeable createChild(EntityAgeable entityageable) {
+		return null;
+	}
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,12 +14,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 
+import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.symbol.logic.IEnvironmentalEffect;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -72,6 +75,117 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 				}
 			}
 
+			for(int vary=130;vary > 0; vary--) {
+				int bID = worldObj.getBlockId(chunkX*16+8, vary, chunkZ*16+4);
+				int tex = chunkX*16+8;
+				int tez = chunkZ*16+4;
+				if(MystObjects.book_lectern != null && bID == MystObjects.book_lectern.blockID) {
+					System.out.println("Spawning foo dogs at (" + tex + "," + vary + "," + tez + ")");
+					EntityFooDog entitychicken;
+					int l = worldObj.getBlockId(tex+1, vary, tez);
+					int r = worldObj.getBlockId(tex-1, vary, tez);
+					if(l == r) {
+						l = worldObj.getBlockId(tex, vary, tez+1);
+						r = worldObj.getBlockId(tex, vary, tez-1);
+						if(r == Block.cobblestone.blockID) {
+							//te.xCoord+2, vary, tez+6
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex+2, vary, tez+6, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex-2, vary, tez+6, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+						}
+						else {
+							//te.xCoord+2, vary, tez-6
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex+2, vary, tez-6, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex-2, vary, tez-6, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+						}
+					}
+					else {
+						if(r == Block.cobblestone.blockID) {
+							//te.xCoord-6, vary, tez+2
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex+6, vary, tez-2, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex+6, vary, tez+2, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+						}
+						else {
+							//te.xCoord+6, vary, tez+2
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex-6, vary, tez-2, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+							entitychicken = new EntityFooDog(worldObj);
+							entitychicken.setLocationAndAngles(tex-6, vary, tez+2, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+						}
+					}
+				}
+			}
+
+			/*AxisAlignedBB par2AxisAlignedBB = AxisAlignedBB.getBoundingBox((double)(chunkX*16), (double)0, (double)(chunkZ*16),(double)(chunkX*16)+16, (double)138, (double)(chunkZ*16)+16);
+    		List<TileEntity> ents = worldObj.getEntitiesWithinAABB(TileEntity.class, par2AxisAlignedBB);
+    		System.out.println("Found " + ents.size() + " TEs");
+    		if(ents.size() > 0) {
+				for(int t = ents.size()-1; t >= 0; t--) {
+					TileEntity te =  ents.get(t);
+					int bID = worldObj.getBlockId(te.xCoord, te.yCoord, te.zCoord);
+					if(MystObjects.book_lectern != null && bID == MystObjects.book_lectern.blockID) {
+						System.out.println("Spawning foo dogs at (" + te.xCoord + "," + te.yCoord + "," + te.zCoord + ")");
+						EntityFooDog entitychicken;
+						int l = worldObj.getBlockId(te.xCoord+1, te.yCoord, te.zCoord);
+						int r = worldObj.getBlockId(te.xCoord-1, te.yCoord, te.zCoord);
+						if(l == r) {
+							l = worldObj.getBlockId(te.xCoord, te.yCoord, te.zCoord+1);
+							r = worldObj.getBlockId(te.xCoord, te.yCoord, te.zCoord-1);
+							if(r == Block.cobblestone.blockID) {
+								//te.xCoord+2, te.yCoord, te.zCoord+6
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord+2, te.yCoord, te.zCoord+6, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord-2, te.yCoord, te.zCoord+6, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+							}
+							else {
+								//te.xCoord+2, te.yCoord, te.zCoord-6
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord+2, te.yCoord, te.zCoord-6, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord-2, te.yCoord, te.zCoord-6, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+							}
+						}
+						else {
+							if(r == Block.cobblestone.blockID) {
+								//te.xCoord-6, te.yCoord, te.zCoord+2
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord-6, te.yCoord, te.zCoord-2, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord-6, te.yCoord, te.zCoord+2, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+							}
+							else {
+								//te.xCoord+6, te.yCoord, te.zCoord+2
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord+6, te.yCoord, te.zCoord-2, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+								entitychicken = new EntityFooDog(worldObj);
+								entitychicken.setLocationAndAngles(te.xCoord+6, te.yCoord, te.zCoord+2, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+							}
+						}
+					}
+				}
+			}*/
 
 			EntityPlayer p = worldObj.getClosestPlayer(i, 64, j, 64);
 			if(p!=null) {
@@ -304,7 +418,7 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 			return var3;
 		}
 	}
-	
+
 	private int getFirstAirBlock(World world, int x, int z)
 	{
 		int var3;

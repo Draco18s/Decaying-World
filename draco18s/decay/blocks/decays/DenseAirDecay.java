@@ -183,7 +183,7 @@ public class DenseAirDecay extends BlockSand
 
                 return;
             }
-            
+
             int[] wID2 = {world.getBlockId(x + 1, y-1, z), world.getBlockId(x - 1, y-1, z), world.getBlockId(x, y-1, z + 1), world.getBlockId(x, y-1, z - 1), world.getBlockId(x + 1, y-1, z+1), world.getBlockId(x - 1, y-1, z-1), world.getBlockId(x-1, y-1, z + 1), world.getBlockId(x+1, y-1, z - 1)};
             if (wID2[0] == Block.fire.blockID || wID2[1] == Block.fire.blockID || wID2[2] == Block.fire.blockID || wID2[3] == Block.fire.blockID || wID2[4] == Block.fire.blockID || wID2[5] == Block.fire.blockID || wID2[6] == Block.fire.blockID || wID2[7] == Block.fire.blockID)
             {

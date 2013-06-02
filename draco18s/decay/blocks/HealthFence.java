@@ -21,7 +21,6 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
 public class HealthFence extends BlockFence {
-
 	public HealthFence(int par1, String par2Str, Material par3Material) {
 		super(par1, par2Str, par3Material);
 		setTickRandomly(true);
@@ -31,21 +30,21 @@ public class HealthFence extends BlockFence {
 		setStepSound(soundStoneFootstep);
 		setUnlocalizedName("Growth Fence");
 	}
-	
+
 	public static boolean isIdAFence(int par0)
     {
         return true;
     }
-	
+
 	public void registerIcons(IconRegister par1IconRegister)
     {
         this.blockIcon = DecayingWorld.healCrystal.getBlockTextureFromSide(0);
     }
-	
+
 	public boolean canPlaceTorchOnTop(World world, int x, int y, int z) {
 		return true;
 	}
-	
+
 	public void updateTick(World world, int x, int y, int z, Random par5Random) {
 		int w;
 		for(int _x=-1; _x <= 1; _x++) {
@@ -89,7 +88,7 @@ public class HealthFence extends BlockFence {
 			}
 		}
 	}
-	
+
 	private float getGrowthRate(World par1World, int x, int y, int z)
     {
         float f = 1.0F;
@@ -138,7 +137,7 @@ public class HealthFence extends BlockFence {
 
         return f;
     }
-	
+
 	public void growTree(World par1World, int par2, int par3, int par4, Random par5Random)
     {
         if (!TerrainGen.saplingGrowTree(par1World, par5Random, par2, par3, par4)) return;

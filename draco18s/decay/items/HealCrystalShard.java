@@ -70,7 +70,7 @@ public class HealCrystalShard extends Item
 
             nbt.setInteger("HealthOverflow", newhpo);
             nbt.setInteger("HealthOverflowTimer", timer);
-            
+
             ByteArrayOutputStream bt = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bt);
 

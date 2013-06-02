@@ -11,7 +11,7 @@ public class MaterialEntity extends TileEntity
     public int[] matID = new int[3];
     public int[] matMD = new int[3];
     public int extraCount = 0;
-    
+
     public MaterialEntity() {
         //matID = new int[3];
         //matMD = new int[3];

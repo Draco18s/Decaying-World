@@ -18,7 +18,7 @@ public class RenderSolidifier extends Render {
 	public RenderSolidifier(Item i) {
 		theItem = i;
 	}
-	
+
 	public RenderSolidifier(Item i, int damage) {
 		theItem = i;
 	}
@@ -40,7 +40,7 @@ public class RenderSolidifier extends Render {
             GL11.glPopMatrix();
         }
 	}
-	
+
 	private void render(Tessellator par1Tessellator, Icon par2Icon)
     {
         float f = par2Icon.getMinU();

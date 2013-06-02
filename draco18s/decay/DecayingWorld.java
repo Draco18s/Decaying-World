@@ -98,9 +98,7 @@ public class DecayingWorld
     public static boolean hardicenine = true;
     public static int userDecay;
     public static int userMeta;
-    //public static Gui overlayGui;
     public static ITickHandler overlayGui;
-    
 
     @SidedProxy(clientSide = "draco18s.decay.client.ClientProxy", serverSide = "draco18s.decay.CommonProxy")
 
@@ -138,7 +136,7 @@ public class DecayingWorld
 	        int rfogID = config.getBlock("rustFog", 1575).getInt();
 	        int gfenceID = config.getBlock("growFence", 1576).getInt();
 	        int chaosID = config.getBlock("rawChaos", 1577).getInt();
-	        
+
 	        int iceShardID = config.getItem("iceShard", 4099).getInt(); //item ID limit 4105 before conflict
 	        int iceBottleID = config.getItem("iceBottle", 4100).getInt();
 	        int hcrysID = config.getItem("healShard", 4101).getInt();
@@ -155,12 +153,12 @@ public class DecayingWorld
 	        conf = config.get(Configuration.CATEGORY_GENERAL, "UserDefinedDecay", -1);
 	        conf.comment = "If you wish to include a decay-like block from another mod, specify the block Block ID and metadata.  -1 disables";
 	        userDecay = conf.getInt(-1);
-	
+
 	        if (userDecay < -1)
 	        {
 	            userDecay = -1;
 	        }
-	
+
 	        userMeta = config.get(Configuration.CATEGORY_GENERAL, "UserDefinedDecayMeta", 0).getInt() % 16;
         config.save();
         metadataTextures = new MetadataIconReg(metadataBlockID, Material.rock);
@@ -196,12 +194,13 @@ public class DecayingWorld
         solidifier = new ItemSolidifier(solidID);
         lifebomb = new ItemLifeBomb(lifebombID);
         rawChaos = new ChaosDecay(chaosID);
-        
+
         EntityRegistry.registerModEntity(EntitySolidifier.class, "Solidifier", 1, this, 350, 5, false);
         EntityRegistry.registerModEntity(EntityLifeBomb.class, "Lifebomb", 2, this, 350, 5, false);
         EntityRegistry.registerModEntity(EntityTreant.class, "EntTreant", 3, this, 350, 5, false);
         EntityRegistry.registerModEntity(EntityBlinkDog.class, "EntBlinkDog", 4, this, 350, 5, false);
         EntityRegistry.registerModEntity(EntityEmpyreal.class, "EntEmpyreal", 5, this, 350, 5, false);
+        EntityRegistry.registerModEntity(EntityFooDog.class, "EntFooDog", 6, this, 350, 5, false);
     }
 
     @Init
@@ -240,7 +239,7 @@ public class DecayingWorld
         GameRegistry.registerItem(iceIXbottle, "iceIXbottle");
         GameRegistry.registerItem(solidifier, "Energy Absorber");
         GameRegistry.registerItem(lifebomb, "Life Bomb");
-        
+
         LanguageRegistry.addName(metadataTextures, "Metadata Debug Texture Holder");
         LanguageRegistry.addName(silverDecay, "Silver Decay");
         LanguageRegistry.addName(pillarDecay, "Bedrock Pillars");
@@ -274,7 +273,7 @@ public class DecayingWorld
         LanguageRegistry.addName(solidifier, "Energy Absorber");
         LanguageRegistry.addName(lifebomb, "Life Bomb");
         LanguageRegistry.addName(rawChaos, "Raw Chaos");
-        
+
         GameRegistry.registerTileEntity(MaterialEntity.class, "mazeMaterial");
         GameRegistry.registerTileEntity(DeathCryEnt.class, "deathCrystal");
         //RenderingRegistry.registerEntityRenderingHandler(EntitySolidifier.class, new RenderSolidifier(solidifier));
@@ -284,7 +283,8 @@ public class DecayingWorld
         RenderingRegistry.registerEntityRenderingHandler(EntityTreant.class, new RenderTreant());
         RenderingRegistry.registerEntityRenderingHandler(EntityBlinkDog.class, new RenderBlinkDog());
         RenderingRegistry.registerEntityRenderingHandler(EntityEmpyreal.class, new RenderEmpyreal());
-        
+        RenderingRegistry.registerEntityRenderingHandler(EntityFooDog.class, new RenderFooDog());
+
         Block.setBurnProperties(methanedecay.blockID, 500, 50);
 
         if (seedWorld)
@@ -301,7 +301,7 @@ public class DecayingWorld
         GameRegistry.addShapelessRecipe(new ItemStack(deathCrystal), shard, shard, shard, shard, shard, shard, shard, shard, shard);
         GameRegistry.addShapelessRecipe(new ItemStack(solidifier), shard, new ItemStack(Item.snowball));
         GameRegistry.addShapedRecipe(new ItemStack(lifebomb), " S ", "dBd", " S ", 'd',shard, 'B', new ItemStack(Item.snowball), 'S', new ItemStack(healShard));
-        
+
         System.out.println("Attempting to register with Mystcraft");
         if (MystAPI.instability != null)
         {
@@ -487,11 +487,11 @@ public class DecayingWorld
         GameRegistry.addShapelessRecipe(IXbottle16, oneShard, oneShard, oneShard, IXbottle13);
         GameRegistry.addShapelessRecipe(IXbottle16, oneShard, oneShard, IXbottle14);
     }
-    
+
     public static boolean evilmobs(EntityLiving var5) {
     	return (var5 instanceof EntitySkeleton || var5 instanceof EntityZombie || var5 instanceof EntityGhast || var5 instanceof EntityPigZombie);
     }
     public static boolean goodmobs(EntityLiving var5) {
-    	return (var5 instanceof EntityTreant || var5 instanceof EntityBlinkDog || var5 instanceof EntityEmpyreal);
+    	return (var5 instanceof EntityTreant || var5 instanceof EntityBlinkDog || var5 instanceof EntityEmpyreal || var5 instanceof EntityFooDog);
     }
 }

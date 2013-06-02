@@ -138,7 +138,7 @@ public class EntityEmpyreal extends EntityMob
 	            this.worldObj.spawnParticle("largesmoke", this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height, this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, 0.0D, 0.0D);
 	        }
         }
-        
+
         if(!this.isInvisible()) {
         	NBTTagCompound nbt = this.getEntityData();
         	int timer = nbt.getInteger("InvisTimer");
@@ -153,7 +153,7 @@ public class EntityEmpyreal extends EntityMob
         	}
         	nbt.setInteger("InvisTimer", timer);
         }
-        
+
         if(getHealth() == getMaxHealth()) {
         	NBTTagCompound nbt = this.getEntityData();
         	nbt.setInteger("AuraTimer",Math.min(nbt.getInteger("AuraTimer"),0));
@@ -230,14 +230,13 @@ public class EntityEmpyreal extends EntityMob
                     this.attackPattern = 0;
                     this.func_70844_e(false);
                 }
-                
+
                 if (this.attackPattern > 1)
                 {
-                	
                 	if(true) {
 	                    float f1 = MathHelper.sqrt_float(par2) * 0.5F;
 	                    this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1009, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
-	
+
 	                    for (int i = 0; i < 1; ++i)
 	                    {
 	                        EntitySmallFireball entitysmallfireball = new EntitySmallFireball(this.worldObj, this, d0 + this.rand.nextGaussian() * (double)f1, d1, d2 + this.rand.nextGaussian() * (double)f1);

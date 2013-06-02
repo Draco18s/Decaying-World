@@ -18,7 +18,7 @@ public class RenderLifebomb extends Render {
 	public RenderLifebomb(Item i) {
 		theItem = i;
 	}
-	
+
 	public RenderLifebomb(Item i, int damage) {
 		theItem = i;
 	}
@@ -39,7 +39,7 @@ public class RenderLifebomb extends Render {
             GL11.glPopMatrix();
         }
 	}
-	
+
 	private void render(Tessellator par1Tessellator, Icon par2Icon)
     {
         float f = par2Icon.getMinU();

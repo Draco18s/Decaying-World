@@ -12,7 +12,6 @@ import draco18s.decay.DecayingWorld;
 
 public class EffectChaos implements IEnvironmentalEffect
 {
-
     public EffectChaos() { }
 
     @Override

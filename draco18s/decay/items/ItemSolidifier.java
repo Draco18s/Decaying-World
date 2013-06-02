@@ -14,14 +14,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemSolidifier extends Item {
-
 	public ItemSolidifier(int par1) {
 		super(par1);
         maxStackSize = 16;
         setCreativeTab(CreativeTabs.tabMisc);
         setUnlocalizedName("Energy Absorber");
 	}
-	
+
 	@Override
 	public void registerIcons(IconRegister par1IconRegister)
     {

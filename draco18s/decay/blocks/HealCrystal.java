@@ -49,7 +49,7 @@ public class HealCrystal extends Block
         setTickRandomly(true);
         //this.setBlockBounds(0.01F, 0.01F, 0.01F, 0.99F, 0.99F, 0.99F);
     }
-    
+
     @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
@@ -68,18 +68,18 @@ public class HealCrystal extends Block
     {
         return true;
     }
-    
+
     public int idDropped(int par1, Random par2Random, int par3)
     {
         return DecayingWorld.healShard.itemID;
     }
-    
+
     @Override
     public void updateTick(World world, int x, int y, int z, Random rand) {
     	int wid, meta,s;
     	for(int i=-2;i<=2;i++) {
     		for(int k=-2;k<=2;k++) {
-				s = i*i + k*k; 
+				s = i*i + k*k;
 				if(rand.nextInt(8) >= s && rand.nextDouble() < 0.1) {
 	    			wid = world.getBlockId(x+i, y, z+k);
 					if(wid == 0) {
@@ -133,7 +133,7 @@ public class HealCrystal extends Block
                 int timer = nbt.getInteger("PosEnergyTimer") + 2;
 
                 int hp = var5.getHealth();
-                
+
                 if (timer > 180)
                 {
                 	if(DecayingWorld.evilmobs(var5)) {
@@ -149,7 +149,7 @@ public class HealCrystal extends Block
                         timer = r;
                 	}
                 }
-                
+
                 int mhp = var5.getMaxHealth();
                 int newhp = hp;
                 int newhpo = hpo;
@@ -197,7 +197,7 @@ public class HealCrystal extends Block
             }
         }
     }
-    
+
     private void initialRandomBlock(World world, int x, int y, int z, Random rand) {
     	int r = rand.nextInt(2);
     	int id = 0;
@@ -211,7 +211,7 @@ public class HealCrystal extends Block
     	}
 		world.setBlock(x, y, z, id, 0, 3);
     }
-    
+
     private void secondaryRandomBlock(World world, int x, int y, int z, Random rand) {
     	int r = rand.nextInt(3);
     	int id = 0;

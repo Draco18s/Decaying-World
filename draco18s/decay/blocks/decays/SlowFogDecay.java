@@ -32,7 +32,7 @@ public class SlowFogDecay extends BaseFogDecay
         super(par1);
         setUnlocalizedName("Dense Fog");
     }
-    
+
     @Override
     public void registerIcons(IconRegister iconRegister)
     {

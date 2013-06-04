@@ -41,6 +41,6 @@ public class EffectYellowDecayProvider implements IInstabilityProvider
     @Override
     public Integer maxLevel()
     {
-        return 10;
+        return 5;
     }
 }

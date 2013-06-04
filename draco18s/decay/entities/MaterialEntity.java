@@ -1,5 +1,7 @@
 package draco18s.decay.entities;
 
+import com.xcompwiz.mystcraft.api.internals.BlockDescriptor;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -12,19 +14,10 @@ public class MaterialEntity extends TileEntity
     public int[] matMD = new int[3];
     public int extraCount = 0;
 
-    public MaterialEntity() {
-        //matID = new int[3];
-        //matMD = new int[3];
-        System.out.println("Setup " + matID[0]);
-        System.out.println("Setup " + matID[1]);
-        System.out.println("Setup " + matID[2]);
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound tc)
     {
         super.readFromNBT(tc);
-        System.out.println("Reading NBT: " + materialBlockID);
         materialBlockID = tc.getInteger("materialBlockID");
         materialBlockMeta = tc.getInteger("materialBlockMeta");
         extraCount = tc.getInteger("ExtraCount");
@@ -42,22 +35,66 @@ public class MaterialEntity extends TileEntity
     public void writeToNBT(NBTTagCompound tc)
     {
         super.writeToNBT(tc);
-        System.out.println("Writing NBT1: " + materialBlockID);
         tc.setInteger("materialBlockID", (int)materialBlockID);
-        System.out.println("Writing NBT2: " + materialBlockMeta);
         tc.setInteger("materialBlockMeta", (int)materialBlockMeta);
-        System.out.println("Writing NBT3: " + extraCount);
         tc.setInteger("ExtraCount", extraCount);
         if(extraCount != 0) {
-	        System.out.println("Writing NBT4: " + matID[0]);
-	        System.out.println("Writing NBT4: " + matID[1]);
-	        System.out.println("Writing NBT4: " + matID[2]);
 	        tc.setIntArray("ExtraIDs", matID);
-	        System.out.println("Writing NBT5: " + matMD[0]);
-	        System.out.println("Writing NBT5: " + matMD[1]);
-	        System.out.println("Writing NBT5: " + matMD[2]);
 	        tc.setIntArray("ExtraMetas", matMD);
         }
-        System.out.println("Done Writing");
+    }
+    
+    public void setMaterials(BlockDescriptor[] allBlocks) {
+    	if(allBlocks.length > 4)
+    		return;
+    	if(extraCount == 0) {
+    		int count = allBlocks.length-1;
+    		do
+            {
+                matID[count - 1] = allBlocks[count].id;
+                matMD[count - 1] = allBlocks[count].metadata;
+                count--;
+            }
+            while (count > 0);
+    	}
+    	else if(extraCount < 3) {
+    		int count = 0;
+    		do
+            {
+                matID[count + extraCount] = allBlocks[count].id;
+                matMD[count + extraCount] = allBlocks[count].metadata;
+                count++;
+            }
+            while (count < extraCount - 3);
+    	}
+    	else {
+    		return;
+    	}
+    }
+    
+    private int partition(BlockDescriptor[] allBlocks, int left, int right, int index)
+    {
+        int pivotValue = allBlocks[index].getInstability(2000);
+        //swap pivot to the end
+        BlockDescriptor temp = allBlocks[right];
+        allBlocks[right] = allBlocks[index];
+        allBlocks[index] = temp;
+        int storeIndex = left;
+
+        for (int i = left; i < right; i++)
+        {
+            if (allBlocks[i].getInstability(2000) <= pivotValue)
+            {
+                temp = allBlocks[i];
+                allBlocks[i] = allBlocks[storeIndex];
+                allBlocks[storeIndex] = temp;
+                storeIndex++;
+            }
+        }
+
+        temp = allBlocks[right];
+        allBlocks[right] = allBlocks[storeIndex];
+        allBlocks[storeIndex] = temp;
+        return storeIndex;
     }
 }

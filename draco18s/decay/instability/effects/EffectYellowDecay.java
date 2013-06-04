@@ -28,9 +28,9 @@ public class EffectYellowDecay implements IEnvironmentalEffect
     @Override
     public void tick(World worldObj, Chunk chunk)
     {
-        if (random.nextDouble() < 0.005 + 0.001 * stackedLevel)
+        if (random.nextDouble() < 0.0005 + 0.0001 * stackedLevel)
         {
-            System.out.println("Adding yellow block");
+            //System.out.println("Adding yellow block");
             int x = chunk.xPosition * 16 + random.nextInt(16);
             int y = 254;
             int z = chunk.zPosition * 16 + random.nextInt(16);

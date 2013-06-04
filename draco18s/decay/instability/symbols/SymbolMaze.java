@@ -21,25 +21,26 @@ public class SymbolMaze implements IAgeSymbol
     @Override
     public void registerLogic(IAgeController controller, long seed)
     {
-        BlockDescriptor blockDescriptor = BlockDescriptor.popBlockOfType(controller, BlockDescriptor.ANY);
+    	controller.popModifier("");
+    	BlockDescriptor block = BlockDescriptor.popBlockOfType(controller, "STRUCTURE");
         EffectMazeDecay feature;
         double IF;
 
-        if (blockDescriptor != null)
+        if (block != null)
         {
-            System.out.println("Maze wall material: " + blockDescriptor.id);
-            System.out.println("Instability: " + blockDescriptor.getInstability(2000));
-            feature = new EffectMazeDecay(blockDescriptor.id, blockDescriptor.metadata);
+            System.out.println("Maze wall material: " + block.id);
+            System.out.println("Instability: " + block.getInstability(2000));
+            feature = new EffectMazeDecay(block.id, block.metadata);
             BlockDescriptor[] allBlocks = new BlockDescriptor[4];
-            allBlocks[0] = blockDescriptor;
-            blockDescriptor = BlockDescriptor.popBlockOfType(controller, BlockDescriptor.STRUCTURE);
+            allBlocks[0] = block;
+            block = BlockDescriptor.popBlockOfType(controller, "STRUCTURE");
             int i = 0;
 
-            while (blockDescriptor != null)
+            while (block != null)
             {
                 i++;
-                allBlocks[i] = blockDescriptor;
-                blockDescriptor = BlockDescriptor.popBlockOfType(controller, BlockDescriptor.STRUCTURE);
+                allBlocks[i] = block;
+                block = BlockDescriptor.popBlockOfType(controller, "STRUCTURE");
             }
 
             if (i > 0)
@@ -94,11 +95,11 @@ public class SymbolMaze implements IAgeSymbol
 
                 feature.addMaterials(allBlocks, i);
                 allInst += i;
-                controller.addInstability((int)(12 * allInst));
+                controller.addInstability((int)(allInst));
             }
             else
             {
-                controller.addInstability(12 * allBlocks[0].getInstability(2000));
+                controller.addInstability(allBlocks[0].getInstability(2000));
             }
 
             //unstable = true;

@@ -349,7 +349,7 @@ public class EntityBlinkDog extends EntityMob
      */
     public int getMaxSpawnedInChunk()
     {
-        return 4;
+        return 5;
     }
 
     public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)

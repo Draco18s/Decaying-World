@@ -45,6 +45,7 @@ public class EntityEmpyreal extends EntityMob
         this.tasks.addTask(3, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
+        System.out.println("World Info: " + par1World.getWorldInfo().getAdditionalProperty("Symbols"));
     }
 
     public int getMaxHealth()
@@ -325,5 +326,10 @@ public class EntityEmpyreal extends EntityMob
     public int getAttackStrength(Entity par1Entity)
     {
         return 4;
+    }
+    
+    public int getMaxSpawnedInChunk()
+    {
+        return 2;
     }
 }

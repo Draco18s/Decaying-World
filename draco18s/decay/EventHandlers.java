@@ -17,9 +17,9 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
-public class EntityDamagedEventHandler
+public class EventHandlers
 {
-    public EntityDamagedEventHandler()
+    public EventHandlers()
     {
     }
 
@@ -131,4 +131,17 @@ public class EntityDamagedEventHandler
             }
         }
     }
+
+    /*@ForgeSubscribe
+    public void biomevent(LivingEvent event){
+    	//if biome name equals...
+    	//forest, wood, jungle, taiga, grove, lush, timber
+    	// -> treant
+    	
+    	//hill, land, grass, field
+    	// -> blink dog
+    	
+    	//desert, waste, sands, dead, inferno, fire, hot, volcano, magma, lava
+    	// -> empyreal
+    }*/
 }

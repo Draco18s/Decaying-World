@@ -19,9 +19,10 @@ public class EffectMazeDecay implements IEnvironmentalEffect
     int materialID = 7;
     int materialMeta = 0;
 
-    int[] extraIDs;
-    int[] extraMetas;
+    //int[] extraIDs;
+    //int[] extraMetas;
     int extraCount;
+    BlockDescriptor[] blocksdesc;
 
     public EffectMazeDecay(int ID, int meta)
     {
@@ -36,20 +37,21 @@ public class EffectMazeDecay implements IEnvironmentalEffect
             return;
         }
 
-        System.out.println("Count EMD ln34: " + count);
-        extraIDs = new int[count];
-        extraMetas = new int[count];
+        //System.out.println("Count EMD ln34: " + count);
+        //extraIDs = new int[count];
+        //extraMetas = new int[count];
+        blocksdesc = blocks;
         extraCount = count;
 
         //count++;
-        do
+        /*do
         {
             System.out.println("Extra ID: " + blocks[count].id);
             extraIDs[count - 1] = blocks[count].id;
             extraMetas[count - 1] = blocks[count].metadata;
             count--;
         }
-        while (count > 0);
+        while (count > 0);*/
 
         materialID = blocks[0].id;
         materialMeta = blocks[0].metadata;
@@ -69,8 +71,8 @@ public class EffectMazeDecay implements IEnvironmentalEffect
         }
 
         int x, y, z;
-        x = random.nextInt(16);
-        z = random.nextInt(16);
+        x = spawn.posX;
+        z = spawn.posZ;
         y = getFirstUncoveredBlock(world, x, z) - 9;
 
         if (y < 0)
@@ -88,14 +90,15 @@ public class EffectMazeDecay implements IEnvironmentalEffect
 
         world.setBlock(spawn.posX, 0, spawn.posZ, DecayingWorld.mazeWallsMat.blockID);
         MaterialEntity mme = (MaterialEntity)world.getBlockTileEntity(spawn.posX, 0, spawn.posZ);
-        System.out.println("MME: " + mme);
+        //System.out.println("MME: " + mme);
         if (mme != null)
         {
             mme.materialBlockID = materialID;
             mme.materialBlockMeta = materialMeta;
-            mme.matID = extraIDs;
-            mme.matMD = extraMetas;
-            mme.extraCount = extraCount;
+            mme.setMaterials(blocksdesc);
+            //mme.matID = extraIDs;
+            //mme.matMD = extraMetas;
+            //mme.extraCount = extraCount;
         }
     }
 

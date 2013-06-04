@@ -327,4 +327,10 @@ public class EntityTreant extends EntityGolem
 
         super.onDeath(par1DamageSource);
     }
+    
+    public int getMaxSpawnedInChunk()
+    {
+        return 1;
+    }
+
 }

@@ -1,8 +1,11 @@
 package draco18s.decay;
 
+import java.lang.reflect.Field;
+
 import com.xcompwiz.mystcraft.api.MystAPI;
 import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.instability.IInstabilityFactory;
+import com.xcompwiz.mystcraft.api.symbol.IGrammarAPI;
 import com.xcompwiz.mystcraft.api.symbol.words.DrawableWord;
 
 import net.minecraft.block.Block;
@@ -11,12 +14,14 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
@@ -98,6 +103,7 @@ public class DecayingWorld
     public static boolean hardicenine = true;
     public static int userDecay;
     public static int userMeta;
+    public static boolean useGrammar;
     public static ITickHandler overlayGui;
 
     @SidedProxy(clientSide = "draco18s.decay.client.ClientProxy", serverSide = "draco18s.decay.CommonProxy")
@@ -160,6 +166,10 @@ public class DecayingWorld
 	        }
 
 	        userMeta = config.get(Configuration.CATEGORY_GENERAL, "UserDefinedDecayMeta", 0).getInt() % 16;
+	        
+	        conf = config.get(Configuration.CATEGORY_GENERAL, "AttemptGrammar", false);
+	        conf.comment = "Enabling attempts to register grammar with Mystcraft's CFG system";
+	        useGrammar = conf.getBoolean(false);
         config.save();
         metadataTextures = new MetadataIconReg(metadataBlockID, Material.rock);
         iceIX = new DecayIceNine(iceIXid, Material.ice);
@@ -276,14 +286,40 @@ public class DecayingWorld
 
         GameRegistry.registerTileEntity(MaterialEntity.class, "mazeMaterial");
         GameRegistry.registerTileEntity(DeathCryEnt.class, "deathCrystal");
-        //RenderingRegistry.registerEntityRenderingHandler(EntitySolidifier.class, new RenderSolidifier(solidifier));
-        //RenderingRegistry.registerEntityRenderingHandler(EntityLifeBomb.class, new RenderLifebomb(lifebomb));
         RenderingRegistry.registerEntityRenderingHandler(EntitySolidifier.class, new RenderSnowball(solidifier));
         RenderingRegistry.registerEntityRenderingHandler(EntityLifeBomb.class, new RenderSnowball(lifebomb));
         RenderingRegistry.registerEntityRenderingHandler(EntityTreant.class, new RenderTreant());
         RenderingRegistry.registerEntityRenderingHandler(EntityBlinkDog.class, new RenderBlinkDog());
         RenderingRegistry.registerEntityRenderingHandler(EntityEmpyreal.class, new RenderEmpyreal());
         RenderingRegistry.registerEntityRenderingHandler(EntityFooDog.class, new RenderFooDog());
+        
+        /*EntityRegistry.addSpawn(EntityBlinkDog.class, 8, 2, 4, EnumCreatureType.monster, BiomeGenBase.plains);
+        EntityRegistry.addSpawn(EntityBlinkDog.class, 2, 2, 4, EnumCreatureType.monster, BiomeGenBase.mushroomIsland);
+        EntityRegistry.addSpawn(EntityBlinkDog.class, 2, 2, 4, EnumCreatureType.monster, BiomeGenBase.mushroomIslandShore);
+        EntityRegistry.addSpawn(EntityBlinkDog.class, 6, 2, 4, EnumCreatureType.monster, BiomeGenBase.beach);
+        EntityRegistry.addSpawn(EntityBlinkDog.class, 6, 2, 4, EnumCreatureType.monster, BiomeGenBase.desert);
+        EntityRegistry.addSpawn(EntityBlinkDog.class, 6, 2, 4, EnumCreatureType.monster, BiomeGenBase.forest);
+        EntityRegistry.addSpawn(EntityBlinkDog.class, 6, 2, 4, EnumCreatureType.monster, BiomeGenBase.icePlains);
+        
+        EntityRegistry.addSpawn(EntityTreant.class, 3, 1, 1, EnumCreatureType.monster, BiomeGenBase.forest);
+        EntityRegistry.addSpawn(EntityTreant.class, 2, 1, 1, EnumCreatureType.monster, BiomeGenBase.forestHills);
+        EntityRegistry.addSpawn(EntityTreant.class, 3, 1, 1, EnumCreatureType.monster, BiomeGenBase.jungle);
+        EntityRegistry.addSpawn(EntityTreant.class, 2, 1, 1, EnumCreatureType.monster, BiomeGenBase.jungleHills);
+        EntityRegistry.addSpawn(EntityTreant.class, 1, 1, 1, EnumCreatureType.monster, BiomeGenBase.mushroomIsland);
+        EntityRegistry.addSpawn(EntityTreant.class, 1, 1, 1, EnumCreatureType.monster, BiomeGenBase.mushroomIslandShore);
+        EntityRegistry.addSpawn(EntityTreant.class, 2, 1, 1, EnumCreatureType.monster, BiomeGenBase.swampland);
+        EntityRegistry.addSpawn(EntityTreant.class, 3, 1, 1, EnumCreatureType.monster, BiomeGenBase.taiga);
+        EntityRegistry.addSpawn(EntityTreant.class, 2, 1, 1, EnumCreatureType.monster, BiomeGenBase.taigaHills);
+        
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 3, 1, 1, EnumCreatureType.monster, BiomeGenBase.plains);
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 5, 1, 1, EnumCreatureType.monster, BiomeGenBase.desert);
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 4, 1, 1, EnumCreatureType.monster, BiomeGenBase.desertHills);
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 2, 1, 1, EnumCreatureType.monster, BiomeGenBase.extremeHills);
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 2, 1, 1, EnumCreatureType.monster, BiomeGenBase.extremeHillsEdge);
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 3, 1, 2, EnumCreatureType.monster, BiomeGenBase.hell);
+        EntityRegistry.addSpawn(EntityEmpyreal.class, 1, 1, 1, EnumCreatureType.monster, BiomeGenBase.beach);*/
+        
+        //duplicate and replace "monster" with "creature" for daytime spawning
 
         Block.setBurnProperties(methanedecay.blockID, 500, 50);
 
@@ -325,14 +361,10 @@ public class DecayingWorld
             MystAPI.instability.registerInstability(new EffectDenseFogProvider());
             MystAPI.instability.registerInstability(new EffectPositiveEnergyProvider());
             MystAPI.instability.registerInstability(new EffectNegativeEnergyProvider());
-            Integer[] intarr = {4, 5, 6, 7, 11, 12, 14, 17, 20, 22};
-            MystAPI.symbol.registerWord("Puzzle", new DrawableWord(intarr));
-            Integer[] intarr2 = {4, 5, 9, 12, 14, 15};
-            MystAPI.symbol.registerWord("Death", new DrawableWord(intarr2));
-            Integer[] intarr3 = {6, 7, 19, 20, 21, 22};
-            MystAPI.symbol.registerWord("Life", new DrawableWord(intarr3));
-            Integer[] intarr4 = {4, 5, 6, 7, 9, 13, 19, 23, 40, 41, 42, 43, 44};
-            MystAPI.symbol.registerWord("Contain", new DrawableWord(intarr4));
+            MystAPI.symbol.registerWord("Puzzle", new DrawableWord(new Integer[] {4, 5, 6, 7, 11, 12, 14, 17, 20, 22}));
+            MystAPI.symbol.registerWord("Death", new DrawableWord(new Integer[] {4, 5, 9, 12, 14, 15}));
+            MystAPI.symbol.registerWord("Life", new DrawableWord(new Integer[] {6, 7, 19, 20, 21, 22}));
+            MystAPI.symbol.registerWord("Contain", new DrawableWord(new Integer[] {4, 5, 6, 7, 9, 13, 19, 23, 40, 41, 42, 43, 44}));
             MystAPI.symbol.registerSymbol(new SymbolMaze(), true);
             MystAPI.symbol.registerSymbol(new SymbolWorm(), true);
             MystAPI.symbol.registerSymbol(new SymbolFrozen(), true);
@@ -349,6 +381,29 @@ public class DecayingWorld
 	            MystAPI.instability.registerInstability(new EffectModDecayProvider());
 				//MystAPI.symbol.registerSymbol(new SymbolModifiable());
 			}
+			
+			Field[] f = MystAPI.class.getDeclaredFields();
+			boolean hasGrammar = false;
+			for(int fi=0; fi < f.length; fi++) {
+				if(f[fi].getName() == "grammar") {
+					hasGrammar = true;
+				}
+			}
+			System.out.println("MystAPI has grammar: " + hasGrammar);
+			if(hasGrammar && useGrammar && MystAPI.grammar != null) {
+				MystAPI.grammar.registerGrammarRule("Populator", 0.5F, new String[] {"Populator","DecaySelection"});
+
+				MystAPI.grammar.registerGrammarRule("DecaySelection", 2.0F, new String[] {"DecaySilver"});
+				MystAPI.grammar.registerGrammarRule("DecaySelection", 1.0F, new String[] {"MethanePockets"});
+				MystAPI.grammar.registerGrammarRule("DecaySelection", 1.0F, new String[0]);
+				MystAPI.grammar.registerGrammarRule("DecaySelection", 0.5F, new String[] {"DecayMolten"});
+				MystAPI.grammar.registerGrammarRule("DecaySelection", 0.2F, new String[] {"MazeMaterial", "MazeMaterial", "MazeMaterial", "MazeMaterial", "DecayMaze"});
+				MystAPI.grammar.registerGrammarRule("DecaySelection", 0.1F, new String[] {"MazeMaterial", "DecayWorm"});
+				
+				MystAPI.grammar.registerGrammarRule("MazeMaterial", 1.0F, new String[] {IGrammarAPI.BLOCK_STRUCTURE});
+				MystAPI.grammar.registerGrammarRule("MazeMaterial", 3.0F, new String[0]);
+			}
+			
         }
         else
         {
@@ -357,7 +412,7 @@ public class DecayingWorld
 
         overlayGui = new OverhealGUI();
         TickRegistry.registerTickHandler(overlayGui, Side.CLIENT);
-        MinecraftForge.EVENT_BUS.register(new EntityDamagedEventHandler());
+        MinecraftForge.EVENT_BUS.register(new EventHandlers());
     }
 
     @PostInit

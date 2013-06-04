@@ -59,28 +59,66 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 				worldGen.generate(worldObj, rand, x, 0, z);
 			}
 
-			ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (37 + chunkZ % 5);
-			if(b.getFloatRainfall() < 0.35 || b.getFloatTemperature() >= 0.8) {
-				ch++;
-			}
-			if(ch == 0) {
-				int x = rand.nextInt(16) + i;
-				int z = rand.nextInt(16) + j;
-				int y = getFirstUncoveredBlock(worldObj, x, z);
-				if(i > 0) {
-					//System.out.println("Placed treant at (" + x + "," + y + "," + z + ")");
-					EntityTreant entitychicken = new EntityTreant(worldObj);
-					entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
-					worldObj.spawnEntityInWorld(entitychicken);
+			//if(b.biomeID > 22) {
+				ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (37 + chunkZ % 5);
+				if(b.getFloatRainfall() < 0.35 || b.getFloatTemperature() >= 0.8) {
+					ch++;
 				}
-			}
+				if(ch == 0) {
+					int x = rand.nextInt(16) + i;
+					int z = rand.nextInt(16) + j;
+					int y = getFirstUncoveredBlock(worldObj, x, z);
+					if(i > 0) {
+						//System.out.println("Placed treant at (" + x + "," + y + "," + z + ")");
+						EntityTreant entitychicken = new EntityTreant(worldObj);
+						entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
+						worldObj.spawnEntityInWorld(entitychicken);
+					}
+				}
+				EntityPlayer p = worldObj.getClosestPlayer(i, 64, j, 64);
+				if(p!=null) {
+					ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
+					if(ch == 0) {
+						int n = 1 + rand.nextInt(3);
+						for(; n >= 0; n--) {
+							int x = rand.nextInt(16) + i;
+							int z = rand.nextInt(16) + j;
+							int y = getFirstUncoveredBlock(worldObj, x, z);
+							if(y > 0) {
+								//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
+								EntityBlinkDog entitychicken = new EntityBlinkDog(worldObj);
+								entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+							}
+						}
+					}
+					ch = (chunkX * (chunkX+chunkZ) + chunkZ * (chunkZ+chunkX) + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
+					if(b.getFloatTemperature() < 0.5) {
+						ch++;
+					}
+					else if(b.getFloatTemperature() > 1.5) {
+						ch--;
+					}
+					if(ch == 0) {
+						int x = rand.nextInt(16) + i;
+						int z = rand.nextInt(16) + j;
+						int y = getFirstAirBlock(worldObj, x, z);
+						if(y > 0) {
+							//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
+							EntityEmpyreal entitychicken = new EntityEmpyreal(worldObj);
+							entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
+							worldObj.spawnEntityInWorld(entitychicken);
+						}
+					}
+				}
+			//}
 
 			for(int vary=130;vary > 0; vary--) {
 				int bID = worldObj.getBlockId(chunkX*16+8, vary, chunkZ*16+4);
 				int tex = chunkX*16+8;
 				int tez = chunkZ*16+4;
 				if(MystObjects.book_lectern != null && bID == MystObjects.book_lectern.blockID) {
-					System.out.println("Spawning foo dogs at (" + tex + "," + vary + "," + tez + ")");
+					//System.out.println("Spawning foo dogs at (" + tex + "," + vary + "," + tez + ")");
 					EntityFooDog entitychicken;
 					int l = worldObj.getBlockId(tex+1, vary, tez);
 					int r = worldObj.getBlockId(tex-1, vary, tez);
@@ -125,43 +163,6 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 							entitychicken.setLocationAndAngles(tex-6, vary, tez+2, 270.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 						}
-					}
-				}
-			}
-
-			EntityPlayer p = worldObj.getClosestPlayer(i, 64, j, 64);
-			if(p!=null) {
-				ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
-				if(ch == 0) {
-					int n = 1 + rand.nextInt(3);
-					for(; n >= 0; n--) {
-						int x = rand.nextInt(16) + i;
-						int z = rand.nextInt(16) + j;
-						int y = getFirstUncoveredBlock(worldObj, x, z);
-						if(y > 0) {
-							//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
-							EntityBlinkDog entitychicken = new EntityBlinkDog(worldObj);
-							entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
-							worldObj.spawnEntityInWorld(entitychicken);
-						}
-					}
-				}
-				ch = (chunkX * (chunkX+chunkZ) + chunkZ * (chunkZ+chunkX) + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
-				if(b.getFloatTemperature() < 0.5) {
-					ch++;
-				}
-				else if(b.getFloatTemperature() > 1.5) {
-					ch--;
-				}
-				if(ch == 0) {
-					int x = rand.nextInt(16) + i;
-					int z = rand.nextInt(16) + j;
-					int y = getFirstAirBlock(worldObj, x, z);
-					if(y > 0) {
-						//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
-						EntityEmpyreal entitychicken = new EntityEmpyreal(worldObj);
-						entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
-						worldObj.spawnEntityInWorld(entitychicken);
 					}
 				}
 			}
@@ -277,47 +278,50 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 			}
 			int chunkX = chunk.xPosition;
 			int chunkZ = chunk.zPosition;
-			int x, y, z, n, ch;
-			EntityPlayer p = worldObj.getClosestPlayer(chunkX*16, 96, chunkZ*16, 96);
-			EntityPlayer p2 = worldObj.getClosestPlayer(chunkX*16, 24, chunkZ*16, 24);
-			if(p!=null && p2==null) {
-				if(foundblinkdog < 2) {
-					ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
-					if(ch == 0 && worldObj.rand.nextInt(120) == 0) {
-						AxisAlignedBB par2AxisAlignedBB = AxisAlignedBB.getBoundingBox((double)(chunkX*16)-32, (double)0, (double)(chunkZ*16)-32,(double)(chunkX*16)+32, (double)96, (double)(chunkZ*16)+32);
-                		//par2AxisAlignedBB.expand(16, 16, 16);
-                		List<Entity> ents = worldObj.getEntitiesWithinAABB(EntityBlinkDog.class, par2AxisAlignedBB);
-                		if(ents.size() < 4) {
-							n = 1 + worldObj.rand.nextInt(2);
-							for(; n >= 0; n--) {
-								x = worldObj.rand.nextInt(16) + chunkX*16;
-								z = worldObj.rand.nextInt(16) + chunkZ*16;
-								y = getFirstUncoveredBlock(worldObj, x, z);
-								if(y > 0) {
-									//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
-									EntityBlinkDog entitychicken = new EntityBlinkDog(worldObj);
-									entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
-									worldObj.spawnEntityInWorld(entitychicken);
+			BiomeGenBase b = worldObj.getBiomeGenForCoords(chunkX*16, chunkZ*16);
+			//if(b.biomeID > 22) {
+				int x, y, z, n, ch;
+				EntityPlayer p = worldObj.getClosestPlayer(chunkX*16, 96, chunkZ*16, 96);
+				EntityPlayer p2 = worldObj.getClosestPlayer(chunkX*16, 24, chunkZ*16, 24);
+				if(p!=null && p2==null) {
+					if(foundblinkdog < 2) {
+						ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
+						if(ch == 0 && worldObj.rand.nextInt(120) == 0) {
+							AxisAlignedBB par2AxisAlignedBB = AxisAlignedBB.getBoundingBox((double)(chunkX*16)-32, (double)0, (double)(chunkZ*16)-32,(double)(chunkX*16)+32, (double)96, (double)(chunkZ*16)+32);
+	                		//par2AxisAlignedBB.expand(16, 16, 16);
+	                		List<Entity> ents = worldObj.getEntitiesWithinAABB(EntityBlinkDog.class, par2AxisAlignedBB);
+	                		if(ents.size() < 4) {
+								n = 1 + worldObj.rand.nextInt(2);
+								for(; n >= 0; n--) {
+									x = worldObj.rand.nextInt(16) + chunkX*16;
+									z = worldObj.rand.nextInt(16) + chunkZ*16;
+									y = getFirstUncoveredBlock(worldObj, x, z);
+									if(y > 0) {
+										//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
+										EntityBlinkDog entitychicken = new EntityBlinkDog(worldObj);
+										entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
+										worldObj.spawnEntityInWorld(entitychicken);
+									}
 								}
 							}
 						}
 					}
-				}
-				if(!foundempyreal) {
-					ch = (chunkX * (chunkX+chunkZ) + chunkZ * (chunkZ+chunkX) + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
-					if(ch == 0 && worldObj.rand.nextInt(80) == 0) {
-						x = worldObj.rand.nextInt(16) + chunkX*16;
-						z = worldObj.rand.nextInt(16) + chunkZ*16;
-						y = getFirstAirBlock(worldObj, x, z);
-						if(y > 0) {
-							//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
-							EntityEmpyreal entitychicken = new EntityEmpyreal(worldObj);
-							entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
-							worldObj.spawnEntityInWorld(entitychicken);
+					if(!foundempyreal) {
+						ch = (chunkX * (chunkX+chunkZ) + chunkZ * (chunkZ+chunkX) + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
+						if(ch == 0 && worldObj.rand.nextInt(80) == 0) {
+							x = worldObj.rand.nextInt(16) + chunkX*16;
+							z = worldObj.rand.nextInt(16) + chunkZ*16;
+							y = getFirstAirBlock(worldObj, x, z);
+							if(y > 0) {
+								//System.out.println("Placed blink dog at (" + x + "," + y + "," + z + ")");
+								EntityEmpyreal entitychicken = new EntityEmpyreal(worldObj);
+								entitychicken.setLocationAndAngles((double)x, (double)y, (double)z, 0.0F, 0.0F);
+								worldObj.spawnEntityInWorld(entitychicken);
+							}
 						}
 					}
 				}
-			}
+			//}
 		}
 	}
 

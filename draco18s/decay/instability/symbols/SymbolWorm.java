@@ -28,10 +28,10 @@ public class SymbolWorm implements IAgeSymbol
         {
             //System.out.println("Worm tube material: " + blockDescriptor.id);
             feature = new EffectWormDecay(-1, blockDescriptor.id, blockDescriptor.metadata);
-            double x = (double)blockDescriptor.getInstability(2000);
+            double x = (double)blockDescriptor.getInstability(250);
             int inst = (int)(10 + 7.7 * x + 0.026 * x * x + 0.0003 * x * x * x);
             //-20.+8.0x+0.038 x^2+0.0002 x^3
-            //System.out.println("Instability amount: " + inst);
+            System.out.println("Worm instability amount: " + inst);
             controller.addInstability(inst);
             //unstable = true;
         }

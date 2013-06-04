@@ -161,12 +161,11 @@ public class ModelFooDog extends ModelBase
             this.wolfLeg2.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float)Math.PI) * 1.4F * par3;
             this.wolfLeg3.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float)Math.PI) * 1.4F * par3;
             this.wolfLeg4.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
+            this.wolfHeadMain.rotateAngleZ = entitywolf.getInterestedAngle(par4) + entitywolf.getShakeAngle(par4, 0.0F);
+            this.wolfMane.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.08F);
+            this.wolfBody.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.16F);
+            this.wolfTail.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.2F);
         }
-
-        this.wolfHeadMain.rotateAngleZ = entitywolf.getInterestedAngle(par4) + entitywolf.getShakeAngle(par4, 0.0F);
-        this.wolfMane.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.08F);
-        this.wolfBody.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.16F);
-        this.wolfTail.rotateAngleZ = entitywolf.getShakeAngle(par4, -0.2F);
     }
 
     /**
@@ -176,9 +175,12 @@ public class ModelFooDog extends ModelBase
      */
     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity par7Entity)
     {
-        super.setRotationAngles(par1, par2, par3, par4, par5, par6, par7Entity);
-        this.wolfHeadMain.rotateAngleX = par5 / (180F / (float)Math.PI);
-        this.wolfHeadMain.rotateAngleY = par4 / (180F / (float)Math.PI);
-        this.wolfTail.rotateAngleX = par3;
+    	EntityFooDog entitywolf = (EntityFooDog)par7Entity;
+    	if (entitywolf.isStone() < 3) {
+	        super.setRotationAngles(par1, par2, par3, par4, par5, par6, par7Entity);
+	        this.wolfHeadMain.rotateAngleX = par5 / (180F / (float)Math.PI);
+	        this.wolfHeadMain.rotateAngleY = par4 / (180F / (float)Math.PI);
+	        this.wolfTail.rotateAngleX = par3;
+    	}
     }
 }

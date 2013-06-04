@@ -27,9 +27,11 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
@@ -358,7 +360,20 @@ public class EntityBlinkDog extends EntityMob
         }
         else
         {
-            if(this.rand.nextDouble() < 1F/3F)
+        	boolean isgold = false;
+        	if(par1DamageSource.getEntity() instanceof EntityPlayer) {
+        		EntityPlayer pl = (EntityPlayer) par1DamageSource.getEntity();
+        		ItemStack a = pl.getCurrentEquippedItem();
+        		if(a != null) {
+		        	Item ai = a.getItem();
+		        	if(ai instanceof ItemTool) {
+		        		ItemTool it = (ItemTool)(ai);
+			        	if(it.getToolMaterialName() != EnumToolMaterial.GOLD.toString())
+			        		isgold = true;
+		        	}
+        		}
+        	}
+            if(!isgold && this.rand.nextDouble() < 1F/3F)
             {
                 if (this.teleportRandomly())
                 {

@@ -59,7 +59,7 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 				worldGen.generate(worldObj, rand, x, 0, z);
 			}
 
-			ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkZ % 5);
+			ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (37 + chunkZ % 5);
 			if(b.getFloatRainfall() < 0.35 || b.getFloatTemperature() >= 0.8) {
 				ch++;
 			}
@@ -99,10 +99,10 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 						else {
 							//te.xCoord+2, vary, tez-6
 							entitychicken = new EntityFooDog(worldObj);
-							entitychicken.setLocationAndAngles(tex+2, vary, tez-6, 0.0F, 0.0F);
+							entitychicken.setLocationAndAngles(tex+2, vary, tez-6, 180.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 							entitychicken = new EntityFooDog(worldObj);
-							entitychicken.setLocationAndAngles(tex-2, vary, tez-6, 0.0F, 0.0F);
+							entitychicken.setLocationAndAngles(tex-2, vary, tez-6, 180.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 						}
 					}
@@ -110,82 +110,24 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 						if(r == Block.cobblestone.blockID) {
 							//te.xCoord-6, vary, tez+2
 							entitychicken = new EntityFooDog(worldObj);
-							entitychicken.setLocationAndAngles(tex+6, vary, tez-2, 0.0F, 0.0F);
+							entitychicken.setLocationAndAngles(tex+6, vary, tez-2, 90.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 							entitychicken = new EntityFooDog(worldObj);
-							entitychicken.setLocationAndAngles(tex+6, vary, tez+2, 0.0F, 0.0F);
+							entitychicken.setLocationAndAngles(tex+6, vary, tez+2, 90.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 						}
 						else {
 							//te.xCoord+6, vary, tez+2
 							entitychicken = new EntityFooDog(worldObj);
-							entitychicken.setLocationAndAngles(tex-6, vary, tez-2, 0.0F, 0.0F);
+							entitychicken.setLocationAndAngles(tex-6, vary, tez-2, 270.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 							entitychicken = new EntityFooDog(worldObj);
-							entitychicken.setLocationAndAngles(tex-6, vary, tez+2, 0.0F, 0.0F);
+							entitychicken.setLocationAndAngles(tex-6, vary, tez+2, 270.0F, 0.0F);
 							worldObj.spawnEntityInWorld(entitychicken);
 						}
 					}
 				}
 			}
-
-			/*AxisAlignedBB par2AxisAlignedBB = AxisAlignedBB.getBoundingBox((double)(chunkX*16), (double)0, (double)(chunkZ*16),(double)(chunkX*16)+16, (double)138, (double)(chunkZ*16)+16);
-    		List<TileEntity> ents = worldObj.getEntitiesWithinAABB(TileEntity.class, par2AxisAlignedBB);
-    		System.out.println("Found " + ents.size() + " TEs");
-    		if(ents.size() > 0) {
-				for(int t = ents.size()-1; t >= 0; t--) {
-					TileEntity te =  ents.get(t);
-					int bID = worldObj.getBlockId(te.xCoord, te.yCoord, te.zCoord);
-					if(MystObjects.book_lectern != null && bID == MystObjects.book_lectern.blockID) {
-						System.out.println("Spawning foo dogs at (" + te.xCoord + "," + te.yCoord + "," + te.zCoord + ")");
-						EntityFooDog entitychicken;
-						int l = worldObj.getBlockId(te.xCoord+1, te.yCoord, te.zCoord);
-						int r = worldObj.getBlockId(te.xCoord-1, te.yCoord, te.zCoord);
-						if(l == r) {
-							l = worldObj.getBlockId(te.xCoord, te.yCoord, te.zCoord+1);
-							r = worldObj.getBlockId(te.xCoord, te.yCoord, te.zCoord-1);
-							if(r == Block.cobblestone.blockID) {
-								//te.xCoord+2, te.yCoord, te.zCoord+6
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord+2, te.yCoord, te.zCoord+6, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord-2, te.yCoord, te.zCoord+6, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-							}
-							else {
-								//te.xCoord+2, te.yCoord, te.zCoord-6
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord+2, te.yCoord, te.zCoord-6, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord-2, te.yCoord, te.zCoord-6, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-							}
-						}
-						else {
-							if(r == Block.cobblestone.blockID) {
-								//te.xCoord-6, te.yCoord, te.zCoord+2
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord-6, te.yCoord, te.zCoord-2, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord-6, te.yCoord, te.zCoord+2, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-							}
-							else {
-								//te.xCoord+6, te.yCoord, te.zCoord+2
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord+6, te.yCoord, te.zCoord-2, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-								entitychicken = new EntityFooDog(worldObj);
-								entitychicken.setLocationAndAngles(te.xCoord+6, te.yCoord, te.zCoord+2, 0.0F, 0.0F);
-								worldObj.spawnEntityInWorld(entitychicken);
-							}
-						}
-					}
-				}
-			}*/
 
 			EntityPlayer p = worldObj.getClosestPlayer(i, 64, j, 64);
 			if(p!=null) {
@@ -234,7 +176,6 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 		{
 			int foundblinkdog = 0;
 			boolean foundempyreal = false;
-			boolean foundplayer = false;
 			//if (worldObj.rand.nextInt(10) < level)
 			//{
 			for (int var3 = chunk.entityLists.length - 1; var3 >= 0; var3--)
@@ -315,7 +256,6 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 
 							if (e instanceof EntityPlayer)
 							{
-								foundplayer = true;
 								ByteArrayOutputStream bt = new ByteArrayOutputStream();
 								DataOutputStream out = new DataOutputStream(bt);
 								try
@@ -338,8 +278,9 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 			int chunkX = chunk.xPosition;
 			int chunkZ = chunk.zPosition;
 			int x, y, z, n, ch;
-			EntityPlayer p = worldObj.getClosestPlayer(chunkX*16, 64, chunkZ*16, 64);
-			if(p!=null && !foundplayer) {
+			EntityPlayer p = worldObj.getClosestPlayer(chunkX*16, 96, chunkZ*16, 96);
+			EntityPlayer p2 = worldObj.getClosestPlayer(chunkX*16, 24, chunkZ*16, 24);
+			if(p!=null && p2==null) {
 				if(foundblinkdog < 2) {
 					ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (17 + chunkX % 5);
 					if(ch == 0 && worldObj.rand.nextInt(120) == 0) {

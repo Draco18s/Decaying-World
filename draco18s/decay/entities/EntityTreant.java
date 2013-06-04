@@ -116,7 +116,7 @@ public class EntityTreant extends EntityGolem
 
     public int getMaxHealth()
     {
-        return 50;
+        return 40;
     }
 
     /**
@@ -166,6 +166,11 @@ public class EntityTreant extends EntityGolem
             {
                 this.worldObj.spawnParticle("tilecrack_" + l + "_" + this.worldObj.getBlockMetadata(i, j, k), this.posX + ((double)this.rand.nextFloat() - 0.5D) * (double)this.width, this.boundingBox.minY + 0.1D, this.posZ + ((double)this.rand.nextFloat() - 0.5D) * (double)this.width, 4.0D * ((double)this.rand.nextFloat() - 0.5D), 0.5D, ((double)this.rand.nextFloat() - 0.5D) * 4.0D);
             }
+        }
+        
+        if(this.isBurning()) {
+        	this.hurtResistantTime = 0;
+        	this.attackEntityFrom(DamageSource.inFire, 1);
         }
     }
 
@@ -278,10 +283,7 @@ public class EntityTreant extends EntityGolem
      */
     protected void dropFewItems(boolean par1, int par2)
     {
-        int j = this.rand.nextInt(3);
-        int k;
-
-        k = 3 + this.rand.nextInt(3);
+        int k = 3 + this.rand.nextInt(3);
 
         for (int l = 0; l < k; ++l)
         {

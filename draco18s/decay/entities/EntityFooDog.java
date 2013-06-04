@@ -1,7 +1,10 @@
 package draco18s.decay.entities;
 
+import java.util.List;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCloth;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -14,6 +17,7 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
+import net.minecraft.entity.ai.EntityAIMoveTwardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
@@ -26,6 +30,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -33,6 +38,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -47,11 +53,14 @@ public class EntityFooDog extends EntityTameable
     private boolean field_70928_h;
 
     private boolean isSitting = false;
-    private EntityAIBase wanderTaskA = new EntityAIWander(this, 0.28F);
-    private EntityAIBase attackTaskA = new EntityAIAttackOnCollide(this, 0.28F, true);
-    private EntityAIBase wanderTaskB = new EntityAIWander(this, 0.19F);
-    private EntityAIBase attackTaskB = new EntityAIAttackOnCollide(this, 0.19F, true);
-    private EntityAIBase leapTask = new EntityAILeapAtTarget(this, 0.4F);
+    private EntityAIBase wanderTaskA = new EntityAIWander(this, 0.4F);
+    private EntityAIBase attackTaskA = new EntityAIAttackOnCollide(this, 0.4F, true);
+    private EntityAIBase navTaskA = new EntityAIMoveTwardsRestriction(this, 0.4F);
+    private EntityAIBase wanderTaskB = new EntityAIWander(this, 0.35F);
+    private EntityAIBase attackTaskB = new EntityAIAttackOnCollide(this, 0.35F, true);
+    private EntityAIBase navTaskB = new EntityAIMoveTwardsRestriction(this, 0.35F);
+    private EntityAIBase leapTask = new EntityAILeapAtTarget(this, 0.65F);
+    private EntityAIBase trackTask = new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F);
 
     /**
      * This time increases while wolf is shaking and emitting water particles.
@@ -70,8 +79,9 @@ public class EntityFooDog extends EntityTameable
         //this.tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
         //this.tasks.addTask(3, new EntityAIAttackOnCollide(this, this.moveSpeed, true));
         //this.tasks.addTask(4, new EntityAIWander(this, this.moveSpeed));
-        this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(6, new EntityAILookIdle(this));
+        //this.tasks.addTask(5, new EntityAIMoveTwardsRestriction(this, 0.3F));
+        //this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        //this.tasks.addTask(7, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
         setAngry(false);
@@ -90,7 +100,7 @@ public class EntityFooDog extends EntityTameable
      */
     public void setAttackTarget(EntityLiving par1EntityLiving)
     {
-    	if(isStone() == 3) {
+    	/*if(isStone() == 3) {
     		System.out.println("Lost stone form");
     		setStone(1);
     		this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
@@ -98,9 +108,10 @@ public class EntityFooDog extends EntityTameable
             this.tasks.addTask(2, leapTask);
             this.tasks.addTask(3, attackTaskA);
             this.tasks.addTask(4, wanderTaskA);
+            this.attackTime = 100;
     	}
     	setAngry(true);
-    	setSitting(false);
+    	setSitting(false);*/
     	super.setAttackTarget(par1EntityLiving);
     }
 
@@ -114,7 +125,7 @@ public class EntityFooDog extends EntityTameable
 
     public int getMaxHealth()
     {
-        return 15;
+        return 40;
     }
 
     protected void entityInit()
@@ -176,11 +187,15 @@ public class EntityFooDog extends EntityTameable
 	            this.tasks.addTask(2, leapTask);
 	            this.tasks.addTask(3, attackTaskA);
 	            this.tasks.addTask(4, wanderTaskA);
+	            this.tasks.addTask(5, navTaskA);
+	            this.tasks.addTask(7, trackTask);
         		break;
         	case 2:
 	            this.tasks.addTask(2, leapTask);
 	            this.tasks.addTask(3, attackTaskB);
 	            this.tasks.addTask(4, wanderTaskB);
+	            this.tasks.addTask(5, navTaskB);
+	            this.tasks.addTask(7, trackTask);
         		break;
         }
     }
@@ -232,6 +247,11 @@ public class EntityFooDog extends EntityTameable
     {
         return -1;
     }
+    
+    public boolean isPotionApplicable(PotionEffect par1PotionEffect)
+    {
+        return par1PotionEffect.getPotionID() == Potion.poison.id ? false : super.isPotionApplicable(par1PotionEffect);
+    }
 
     /**
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
@@ -248,9 +268,9 @@ public class EntityFooDog extends EntityTameable
             this.prevTimeWolfIsShaking = 0.0F;
             this.worldObj.setEntityState(this, (byte)8);
         }
-        if(this.isPotionActive(Potion.poison)) {
+        /*if(this.isPotionActive(Potion.poison)) {
         	this.curePotionEffects(new ItemStack(Item.bucketMilk));
-        }
+        }*/
         if(this.entityToAttack == null && this.findPlayerToAttack() == null) {
         	setAngry(false);
         }
@@ -262,8 +282,10 @@ public class EntityFooDog extends EntityTameable
 	        		setStone(2);
 		    		this.tasks.removeTask(wanderTaskA);
 		    		this.tasks.removeTask(attackTaskA);
+		            this.tasks.removeTask(navTaskA);
 		            this.tasks.addTask(3, attackTaskB);
 		            this.tasks.addTask(4, wanderTaskB);
+		            this.tasks.addTask(5, navTaskB);
 	            }
 	        	break;
         	case 2:
@@ -273,18 +295,36 @@ public class EntityFooDog extends EntityTameable
             		setStone(1);
 		    		this.tasks.removeTask(wanderTaskB);
 		    		this.tasks.removeTask(attackTaskB);
+		            this.tasks.removeTask(navTaskB);
 		            this.tasks.addTask(3, attackTaskA);
 		            this.tasks.addTask(4, wanderTaskA);
+		            this.tasks.addTask(5, navTaskA);
 	            }
             	break;
         	case 3:
             	this.moveSpeed = 0.0F;
+            	AxisAlignedBB par2AxisAlignedBB = AxisAlignedBB.getBoundingBox(this.posX-16,this.posY-16,this.posZ-16,this.posX+16,this.posY+16,this.posZ+16);
+            	List<EntityPlayer> ents = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, par2AxisAlignedBB);
+            	if(ents.size() > 0) {
+        			for (int entind = ents.size() - 1; entind >= 0; entind--) {
+        				EntityPlayer pl = ents.get(entind);
+        				if(!(pl.openContainer instanceof ContainerPlayer)) {
+	            			setStone(1);
+	            			this.setAttackTarget(pl);
+	    		            this.tasks.addTask(3, attackTaskA);
+	    		            this.tasks.addTask(4, wanderTaskA);
+	    		            this.tasks.addTask(5, navTaskA);
+	    		            this.tasks.addTask(7, trackTask);
+	    		            this.attackTime = 200;
+	            		}
+					}
+        		}
             	break;
         }
-        if(!isAngry() && isStone() < 3) {
+        if(getAttackTarget() == null && isStone() < 3) {
 	        NBTTagCompound nbt = this.getEntityData();
 	    	if(nbt.getInteger("HealthOverflow") >= getMaxHealth()*2-1) {
-	    		System.out.println("Gained stone form");
+	    		//System.out.println("Gained stone form");
 	    		setStone(3);
 	    		this.dataWatcher.updateObject(16, Byte.valueOf((byte)1));
 	            this.tasks.removeTask(leapTask);
@@ -292,6 +332,9 @@ public class EntityFooDog extends EntityTameable
 	    		this.tasks.removeTask(attackTaskA);
 	    		this.tasks.removeTask(wanderTaskB);
 	    		this.tasks.removeTask(attackTaskB);
+	            this.tasks.removeTask(navTaskB);
+	            this.tasks.removeTask(navTaskB);
+	            this.tasks.removeTask(trackTask);
 	    		this.setPathToEntity((PathEntity)null);
 	    	}
         }
@@ -344,6 +387,12 @@ public class EntityFooDog extends EntityTameable
             }
         }
     }
+    
+    /*@Override
+    protected Entity findPlayerToAttack()
+    {
+    	return this.worldObj.getClosestVulnerablePlayerToEntity(this, 16);
+    }*/
 
     @SideOnly(Side.CLIENT)
     public boolean getWolfShaking()
@@ -401,11 +450,23 @@ public class EntityFooDog extends EntityTameable
         else
         {
         	if(isStone() == 3) {
-        		int n = par2 / 2;
-        		if(n == 0) {
-        			n = this.rand.nextInt(2);
+        		int n = (int)(par2 * 0.8F + 0.2);
+        		if(n > 0) {
+        			//System.out.println("Lost stone form");
+            		setStone(1);
+            		this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
+            		this.moveSpeed = 0.28F;
+                    this.tasks.addTask(2, leapTask);
+                    this.tasks.addTask(3, attackTaskA);
+                    this.tasks.addTask(4, wanderTaskA);
+                    this.attackTime = 100;
+	            	setAngry(true);
+	            	setSitting(false);
+        			return super.attackEntityFrom(par1DamageSource, n);
         		}
-        		return super.attackEntityFrom(par1DamageSource, n);
+        		else {
+        			return false;
+        		}
         	}
         	return super.attackEntityFrom(par1DamageSource, par2);
         }
@@ -413,8 +474,20 @@ public class EntityFooDog extends EntityTameable
 
     public boolean attackEntityAsMob(Entity par1Entity)
     {
-    	int i = 3;
+    	int i = 4;
         return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), i);
+    }
+    
+    @Override
+    protected void attackEntity(Entity par1Entity, float par2) {
+    	if(getHealth() <= getMaxHealth() / 2.5) {
+    		if (this.attackTime == 0)
+            {
+    			System.out.println("Regenerating");
+    			this.attackTime = 1200;
+    			this.addPotionEffect(new PotionEffect(Potion.regeneration.id, 120, 1));
+            }
+    	}
     }
 
     @SideOnly(Side.CLIENT)
@@ -471,7 +544,11 @@ public class EntityFooDog extends EntityTameable
      */
     public void setAngry(boolean par1)
     {
-        byte b0 = this.dataWatcher.getWatchableObjectByte(16);
+        //byte b0 = this.dataWatcher.getWatchableObjectByte(16);
+    	byte b0 = 0;
+    	if(par1)
+    		b0 = 1;
+    	this.dataWatcher.updateObject(16, Byte.valueOf(b0));
         setSitting(false);
     }
 
@@ -502,4 +579,14 @@ public class EntityFooDog extends EntityTameable
 	public EntityAgeable createChild(EntityAgeable entityageable) {
 		return null;
 	}
+	
+	protected void dropFewItems(boolean par1, int par2)
+    {
+        int k = this.rand.nextInt(2);
+
+        for (int l = 0; l < k; ++l)
+        {
+            this.dropItem(Item.enderPearl.itemID, 1);
+        }
+    }
 }

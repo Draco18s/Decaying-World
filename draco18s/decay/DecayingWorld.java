@@ -167,9 +167,9 @@ public class DecayingWorld
 
 	        userMeta = config.get(Configuration.CATEGORY_GENERAL, "UserDefinedDecayMeta", 0).getInt() % 16;
 	        
-	        conf = config.get(Configuration.CATEGORY_GENERAL, "AttemptGrammar", false);
+	        conf = config.get(Configuration.CATEGORY_GENERAL, "AttemptGrammar", true);
 	        conf.comment = "Enabling attempts to register grammar with Mystcraft's CFG system";
-	        useGrammar = conf.getBoolean(false);
+	        useGrammar = conf.getBoolean(true);
         config.save();
         metadataTextures = new MetadataIconReg(metadataBlockID, Material.rock);
         iceIX = new DecayIceNine(iceIXid, Material.ice);

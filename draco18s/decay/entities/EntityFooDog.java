@@ -582,11 +582,6 @@ public class EntityFooDog extends EntityTameable
 	
 	protected void dropFewItems(boolean par1, int par2)
     {
-        int k = this.rand.nextInt(2);
-
-        for (int l = 0; l < k; ++l)
-        {
-            this.dropItem(Item.enderPearl.itemID, 1);
-        }
+        
     }
 }

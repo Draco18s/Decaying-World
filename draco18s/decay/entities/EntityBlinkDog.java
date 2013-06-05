@@ -184,13 +184,15 @@ public class EntityBlinkDog extends EntityMob
     {
         return 0.4F;
     }
-
-    /**
-     * Returns the item ID for the item the mob drops on death.
-     */
-    protected int getDropItemId()
+    
+    protected void dropFewItems(boolean par1, int par2)
     {
-        return -1;
+        int k = this.rand.nextInt(2);
+
+        for (int l = 0; l < k; ++l)
+        {
+            this.dropItem(Item.enderPearl.itemID, 1);
+        }
     }
 
     /**

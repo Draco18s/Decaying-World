@@ -418,7 +418,7 @@ public class DecayingWorld
     @PostInit
     public void postInit(FMLPostInitializationEvent event)
     {
-    	((ChaosDecay)rawChaos).setupIDs();
+    	
     }
 
     private void shardRecipes()

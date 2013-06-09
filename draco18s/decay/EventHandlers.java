@@ -7,12 +7,14 @@ import java.util.Random;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import draco18s.decay.blocks.decays.ChaosDecay;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -144,4 +146,9 @@ public class EventHandlers
     	//desert, waste, sands, dead, inferno, fire, hot, volcano, magma, lava
     	// -> empyreal
     }*/
+    
+    @ForgeSubscribe
+    public void textureEvent(TextureStitchEvent.Post event) {
+    	((ChaosDecay)(DecayingWorld.rawChaos)).setupIDs();
+    }
 }

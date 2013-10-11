@@ -6,10 +6,12 @@ import draco18s.decay.entities.EntityEmpyreal;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
 public class RenderEmpyreal extends RenderLiving
 {
+	private static final ResourceLocation textures = new ResourceLocation("decayingworld:textures/mob/empyreal.png");
     private int field_77068_a;
 
     public RenderEmpyreal()
@@ -46,4 +48,9 @@ public class RenderEmpyreal extends RenderLiving
     {
         this.renderBlaze((EntityEmpyreal)par1Entity, par2, par4, par6, par8, par9);
     }
+
+	@Override
+	protected ResourceLocation getEntityTexture(Entity entity) {
+		return textures;
+	}
 }

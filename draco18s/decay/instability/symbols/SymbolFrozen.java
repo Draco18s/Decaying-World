@@ -12,11 +12,11 @@ public class SymbolFrozen implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 5;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -57,4 +57,9 @@ public class SymbolFrozen implements IAgeSymbol
         String[] str = {"Void", "System", "Inhibit", "Energy"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

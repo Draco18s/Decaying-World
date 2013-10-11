@@ -12,10 +12,10 @@ public class ColdDamage extends DamageSource
         setDamageBypassesArmor();
     }
 
-    @Override
+    /*@Override
     public String getDeathMessage(EntityLiving par1EntityLiving)
     {
         EntityPlayer par1EntityPlayer = (EntityPlayer)par1EntityLiving;
         return par1EntityPlayer.username + " froze to death.";
-    }
+    }*/
 }

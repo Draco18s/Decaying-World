@@ -129,10 +129,10 @@ public class HealCrystal extends Block
             {
                 EntityLiving var5 = (EntityLiving)e;
                 NBTTagCompound nbt = var5.getEntityData();
-                int hpo = nbt.getInteger("HealthOverflow");
+                float hpo = nbt.getFloat("HealthOverflow");
                 int timer = nbt.getInteger("PosEnergyTimer") + 2;
 
-                int hp = var5.getHealth();
+                float hp = var5.getHealth();
 
                 if (timer > 180)
                 {
@@ -150,9 +150,9 @@ public class HealCrystal extends Block
                 	}
                 }
 
-                int mhp = var5.getMaxHealth();
-                int newhp = hp;
-                int newhpo = hpo;
+                float mhp = var5.getMaxHealth();
+                float newhp = hp;
+                float newhpo = hpo;
 
                 if (hp < mhp && !DecayingWorld.evilmobs(var5))
                 {
@@ -172,7 +172,7 @@ public class HealCrystal extends Block
                     }
                 }
 
-                nbt.setInteger("HealthOverflow", newhpo);
+                nbt.setFloat("HealthOverflow", newhpo);
                 nbt.setInteger("PosEnergyTimer", timer);
                 nbt.setBoolean("TempDecay", true);
 
@@ -184,7 +184,7 @@ public class HealCrystal extends Block
                     try
                     {
                         out.writeInt(1);
-                        out.writeInt(newhpo);
+                        out.writeFloat(newhpo);
                         Packet250CustomPayload packet = new Packet250CustomPayload("MoreDecay", bt.toByteArray());
                         Player player = (Player)e;
                         PacketDispatcher.sendPacketToPlayer(packet, player);

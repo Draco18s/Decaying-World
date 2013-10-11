@@ -1,10 +1,13 @@
 package draco18s.decay.entities;
 
+import java.util.UUID;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIDefendVillage;
@@ -12,12 +15,14 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookAtVillager;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAIMoveTowardsTarget;
-import net.minecraft.entity.ai.EntityAIMoveTwardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.monster.IMob;
@@ -28,6 +33,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
 
@@ -42,22 +48,22 @@ public class EntityTreant extends EntityGolem
     public EntityTreant(World par1World)
     {
         super(par1World);
-        this.moveSpeed = 0.16F;
-        this.texture = "/mods/DecayingWorld/textures/mob/treant.png";
+        //this.moveSpeed = 0.16F;
+        //this.texture = "/mods/DecayingWorld/textures/mob/treant.png";
         this.setSize(1.4F, 2.9F);
         this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, EntityPlayer.class, this.moveSpeed*1.8F, false));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityZombie.class, this.moveSpeed*1.8F, true));
-        this.tasks.addTask(3, new EntityAIMoveTwardsRestriction(this, this.moveSpeed));
-        this.tasks.addTask(4, new EntityAIWander(this, this.moveSpeed));
+        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.288D, false));
+        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityZombie.class, 0.288D, true));
+        this.tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.16D));
+        this.tasks.addTask(4, new EntityAIWander(this, 0.16D));
         this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(6, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 16.0F, 0, false));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true, true, IMob.mobSelector));
+        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 0, false, true, IMob.mobSelector));
     }
 
-    @Override
+    /*@Override
     public void knockBack(Entity par1Entity, int par2, double par3, double par5)
     {
         this.isAirBorne = true;
@@ -74,7 +80,7 @@ public class EntityTreant extends EntityGolem
         {
             this.motionY = 0.4000000059604645D;
         }
-    }
+    }*/
 
     protected void entityInit()
     {
@@ -113,11 +119,18 @@ public class EntityTreant extends EntityGolem
 
         super.updateAITick();
     }
+    
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(40.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.16D);
+    }
 
-    public int getMaxHealth()
+    /*public int getMaxHealth()
     {
         return 40;
-    }
+    }*/
 
     /**
      * Decrements the entity's air supply when underwater

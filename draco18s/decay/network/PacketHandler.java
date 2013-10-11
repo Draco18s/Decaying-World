@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import draco18s.decay.DecayingWorld;
 import draco18s.decay.client.OverhealGUI;
 
@@ -46,7 +48,7 @@ public class PacketHandler implements IPacketHandler
             switch (guiId)
             {
                 case 1:
-                    gui.playerOverflowHp = dis.readInt();
+                    gui.playerOverflowHp = dis.readFloat();
                     //System.out.println("hp = "+gui.playerOverflowHp+"");
                     break;
                 case 2:

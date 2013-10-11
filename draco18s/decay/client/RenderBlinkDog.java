@@ -4,9 +4,12 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 import draco18s.decay.entities.EntityBlinkDog;
@@ -14,6 +17,7 @@ import draco18s.decay.entities.EntityBlinkDog;
 @SideOnly(Side.CLIENT)
 public class RenderBlinkDog extends RenderLiving
 {
+	private static final ResourceLocation textures = new ResourceLocation("decayingworld:textures/mob/blinkdog.png");
     public RenderBlinkDog()
     {
         //super(par1ModelBase, par3);
@@ -34,7 +38,7 @@ public class RenderBlinkDog extends RenderLiving
         if (par2 == 0 && par1EntityWolf.getWolfShaking())
         {
             f1 = par1EntityWolf.getBrightness(par3) * par1EntityWolf.getShadingWhileShaking(par3);
-            this.loadTexture(par1EntityWolf.getTexture());
+            this.bindTexture(textures);
             GL11.glColor3f(f1, f1, f1);
             return 1;
         }
@@ -59,4 +63,9 @@ public class RenderBlinkDog extends RenderLiving
     {
         return this.getTailRotation((EntityBlinkDog)par1EntityLiving, par2);
     }
+
+	@Override
+	protected ResourceLocation getEntityTexture(Entity entity) {
+		return textures;
+	}
 }

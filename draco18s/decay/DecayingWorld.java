@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import com.xcompwiz.mystcraft.api.MystAPI;
 import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.instability.IInstabilityFactory;
+import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
 import com.xcompwiz.mystcraft.api.symbol.IGrammarAPI;
 import com.xcompwiz.mystcraft.api.symbol.words.DrawableWord;
 
@@ -16,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityPigZombie;
@@ -24,6 +26,7 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
@@ -33,11 +36,13 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -58,7 +63,7 @@ import draco18s.decay.instability.symbols.*;
 import draco18s.decay.items.*;
 import draco18s.decay.network.PacketHandler;
 
-@Mod(modid = "DecayingWorld", name = "Decaying World", version = "3.1.0", dependencies = "required-after:Mystcraft")
+@Mod(modid = "DecayingWorld", name = "Decaying World", version = "4.1.0", dependencies = "required-after:Mystcraft")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
         clientPacketHandlerSpec = @SidedPacketHandler(channels = {"MoreDecay"}, packetHandler = PacketHandler.class),
         serverPacketHandlerSpec = @SidedPacketHandler(channels = {"MoreDecay"}, packetHandler = PacketHandler.class))
@@ -90,10 +95,21 @@ public class DecayingWorld
     public static Block sfogDecay;
     public static Block rfogDecay;
     public static Block methanedecay;
+    public static Block methanegas;
     public static Block healCrystal;
     public static Block deathCrystal;
     public static Block growthFence;
     public static Block rawChaos;
+    public static Block brittleDecay;
+    public static Block unstableDecay;
+    public static Block nitroDecay;
+    public static Block nitroDecayGlowing;
+
+    public static Block stoneUnst;
+    public static Block stoneFrac;
+    public static Block stoneBroke;
+    public static Block stoneCobble;
+    
     public static Item iceIXshard;
     public static Item iceIXbottle;
     public static Item healShard;
@@ -106,16 +122,17 @@ public class DecayingWorld
     public static boolean hardicenine = true;
     public static int userDecay;
     public static int userMeta;
-    public static boolean useGrammar;
+    //public static boolean useGrammar;
     public static ITickHandler overlayGui;
 
     @SidedProxy(clientSide = "draco18s.decay.client.ClientProxy", serverSide = "draco18s.decay.CommonProxy")
 
     public static CommonProxy proxy;
-
-    @PreInit
+    
+    @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+    	//System.out.println("Pre-Init DecayingWorld");
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
 	        int metadataBlockID = config.getBlock("DebugTextures", 1550).getInt();
@@ -138,21 +155,32 @@ public class DecayingWorld
 	        int smogID = config.getBlock("SmogDecay", 1568).getInt();
 	        int methID = config.getBlock("Methane", 1569).getInt();
 	        int fogID = config.getBlock("Fog", 1570).getInt();
-	        int pfogID = config.getBlock("Poison Fog", 1571).getInt();
-	        int sfogID = config.getBlock("Dense Fog", 1572).getInt();
+	        int pfogID = config.getBlock("PoisonFog", 1571).getInt();
+	        int sfogID = config.getBlock("DenseFog", 1572).getInt();
 	        int hcryID = config.getBlock("HealCrystal", 1573).getInt();
 	        int dcryID = config.getBlock("DeathCrystal", 1574).getInt();
 	        int rfogID = config.getBlock("rustFog", 1575).getInt();
 	        int gfenceID = config.getBlock("growFence", 1576).getInt();
 	        int chaosID = config.getBlock("rawChaos", 1577).getInt();
+	        int brittleID = config.getBlock("brittleDecay", 1578).getInt();
+	        int unstableDecayID = config.getBlock("unstableDecay", 1579).getInt();
+	        int nitroDecayID = config.getBlock("nitroDecay", 1586).getInt();
+	        //nitroDecayGlowing = 1587
+	        int methemID = config.getBlock("MethaneEmitter", 1588).getInt();
+	        
+	        int stoneUnstID = config.getBlock("stoneU", 1580).getInt();
+	        int stoneFracID = config.getBlock("stoneF", 1581).getInt();
+	        int stoneBrokeID = config.getBlock("stoneB", 1582).getInt();
+	        int stoneCobbleID = config.getBlock("stoneC", 1583).getInt();
 
-	        int iceShardID = config.getItem("iceShard", 4099).getInt(); //item ID limit 4105 before conflict
+	        int iceShardID = config.getItem("iceShard", 4099).getInt(); //item ID limit 4105 before potential conflict
 	        int iceBottleID = config.getItem("iceBottle", 4100).getInt();
 	        int hcrysID = config.getItem("healShard", 4101).getInt();
 	        int dcrysID = config.getItem("deathShard", 4102).getInt();
 	        int solidID = config.getItem("solidifier", 4103).getInt();
 	        int lifebombID = config.getItem("lifebomb", 4104).getInt();
 	        //int ??? = config.getItem("deathShard", 4105).getInt();
+	        
 	        Property conf = config.get(Configuration.CATEGORY_GENERAL, "SeedVanilla", false);
 	        conf.comment = "Enabling this causes some decay types to be seeded in the Overworld (Silverfish, Volcanos, Starry Decay, Methane gas), Nether (Pillars, Volcanos), and End (Pillars).";
 	        seedWorld = conf.getBoolean(false);
@@ -170,9 +198,9 @@ public class DecayingWorld
 
 	        userMeta = config.get(Configuration.CATEGORY_GENERAL, "UserDefinedDecayMeta", 0).getInt() % 16;
 	        
-	        conf = config.get(Configuration.CATEGORY_GENERAL, "AttemptGrammar", true);
-	        conf.comment = "Enabling attempts to register grammar with Mystcraft's CFG system";
-	        useGrammar = conf.getBoolean(true);
+	        //conf = config.get(Configuration.CATEGORY_GENERAL, "AttemptGrammar", true);
+	        //conf.comment = "Enabling attempts to register grammar with Mystcraft's CFG system";
+	        //useGrammar = conf.getBoolean(true);
         config.save();
         metadataTextures = new MetadataIconReg(metadataBlockID, Material.rock);
         iceIX = new DecayIceNine(iceIXid, Material.ice);
@@ -194,7 +222,8 @@ public class DecayingWorld
         mazeWalls = new MazeWalls(mazeWallsID, Material.rock);
         mazeWallsMat = new MaterialBlock(mazeWallsMatID, Material.rock);
         smogdecay = new SmogDecay(smogID);
-        methanedecay = new DenseAirDecay(methID);
+        methanegas = new Methane(methID);
+        methanedecay = new MethaneEmitter(methemID);
         fogDecay = new BaseFogDecay(fogID);
         pfogDecay = new PoisonFogDecay(pfogID);
         sfogDecay = new SlowFogDecay(sfogID);
@@ -207,6 +236,15 @@ public class DecayingWorld
         solidifier = new ItemSolidifier(solidID);
         lifebomb = new ItemLifeBomb(lifebombID);
         rawChaos = new ChaosDecay(chaosID);
+        brittleDecay = new BrittleDecay(brittleID, Material.rock);
+        unstableDecay = new UnstableDecay(unstableDecayID, Material.rock);
+        nitroDecay = new NitroDecay(nitroDecayID);
+        nitroDecayGlowing = new NitroDecay(nitroDecayID+1).setLightValue(0.625F);
+
+        stoneUnst = new StoneUnstable(stoneUnstID);
+        stoneFrac = new StoneFrac(stoneFracID);
+        stoneBroke = new StoneBroke(stoneBrokeID);
+        stoneCobble = new StoneCobble(stoneCobbleID);
 
         EntityRegistry.registerModEntity(EntitySolidifier.class, "Solidifier", 1, this, 350, 5, false);
         EntityRegistry.registerModEntity(EntityLifeBomb.class, "Lifebomb", 2, this, 350, 5, false);
@@ -224,9 +262,10 @@ public class DecayingWorld
         EntityList.addMapping(EntityEmpyreal.class, "Empyreal", 5, 16667218, 16775118);
         EntityList.addMapping(EntityFooDog.class, "Foo Dog", 6, 16438947, 16032045);
         //LanguageRegistry.addStringLocalization(key, "en_US", "Treant");
+    	proxy.loadSounds();
     }
 
-    @Init
+    @EventHandler
     public void load(FMLInitializationEvent event)
     {
         GameRegistry.registerBlock(metadataTextures, "metadataTextures");
@@ -247,7 +286,8 @@ public class DecayingWorld
         GameRegistry.registerBlock(mazeWalls, "mazeWalls");
         GameRegistry.registerBlock(mazeWallsMat, "mazeWallsMat");
         GameRegistry.registerBlock(smogdecay, "Smog");
-        GameRegistry.registerBlock(methanedecay, "Methane");
+        GameRegistry.registerBlock(methanegas, "Methane");
+        GameRegistry.registerBlock(methanedecay, "Methane Emitter");
         GameRegistry.registerBlock(fogDecay, "Fog");
         GameRegistry.registerBlock(pfogDecay, "Poison Fog");
         GameRegistry.registerBlock(sfogDecay, "Dense Fog");
@@ -256,6 +296,14 @@ public class DecayingWorld
         GameRegistry.registerBlock(rfogDecay, "Corrosive Fog");
         GameRegistry.registerBlock(growthFence, "Growth Fence");
         GameRegistry.registerBlock(rawChaos, "Raw Chaos");
+        GameRegistry.registerBlock(brittleDecay, "Brittle Decay");
+        GameRegistry.registerBlock(unstableDecay, "Unstable Decay");
+        GameRegistry.registerBlock(stoneUnst, "Stone (Unstable)");
+        GameRegistry.registerBlock(stoneFrac, "Stone (Fractured)");
+        GameRegistry.registerBlock(stoneBroke, "Stone (Broken)");
+        GameRegistry.registerBlock(stoneCobble, "Stone (Cobble)");
+        GameRegistry.registerBlock(nitroDecay, "Nitro Decay");
+        
         GameRegistry.registerItem(iceIXshard, "iceIXshard");
         GameRegistry.registerItem(healShard, "healshard");
         GameRegistry.registerItem(deathShard, "deathshard");
@@ -285,7 +333,8 @@ public class DecayingWorld
         LanguageRegistry.addName(mazeWalls, "Maze Walls");
         LanguageRegistry.addName(mazeWallsMat, "Maze Walls Mat");
         LanguageRegistry.addName(smogdecay, "Smog");
-        LanguageRegistry.addName(methanedecay, "Methane");
+        LanguageRegistry.addName(methanegas, "Methane");
+        LanguageRegistry.addName(methanedecay, "Methane Emitter");
         LanguageRegistry.addName(fogDecay, "Fog");
         LanguageRegistry.addName(pfogDecay, "Poison Fog");
         LanguageRegistry.addName(sfogDecay, "Dense Fog");
@@ -296,15 +345,16 @@ public class DecayingWorld
         LanguageRegistry.addName(solidifier, "Energy Absorber");
         LanguageRegistry.addName(lifebomb, "Life Bomb");
         LanguageRegistry.addName(rawChaos, "Raw Chaos");
+        LanguageRegistry.addName(brittleDecay, "Brittle Decay"); 
+        LanguageRegistry.addName(unstableDecay, "Unstable Decay");
+        LanguageRegistry.addName(stoneUnst, "Stone (Unstable)");
+        LanguageRegistry.addName(stoneFrac, "Stone (Fractured)");
+        LanguageRegistry.addName(stoneBroke, "Stone (Broken)");
+        LanguageRegistry.addName(stoneCobble, "Stone (Cobble)");
+        LanguageRegistry.addName(nitroDecay, "Nitro Decay");
 
         GameRegistry.registerTileEntity(MaterialEntity.class, "mazeMaterial");
         GameRegistry.registerTileEntity(DeathCryEnt.class, "deathCrystal");
-        RenderingRegistry.registerEntityRenderingHandler(EntitySolidifier.class, new RenderSnowball(solidifier));
-        RenderingRegistry.registerEntityRenderingHandler(EntityLifeBomb.class, new RenderSnowball(lifebomb));
-        RenderingRegistry.registerEntityRenderingHandler(EntityTreant.class, new RenderTreant());
-        RenderingRegistry.registerEntityRenderingHandler(EntityBlinkDog.class, new RenderBlinkDog());
-        RenderingRegistry.registerEntityRenderingHandler(EntityEmpyreal.class, new RenderEmpyreal());
-        RenderingRegistry.registerEntityRenderingHandler(EntityFooDog.class, new RenderFooDog());
         
         /*EntityRegistry.addSpawn(EntityBlinkDog.class, 8, 2, 4, EnumCreatureType.monster, BiomeGenBase.plains);
         EntityRegistry.addSpawn(EntityBlinkDog.class, 2, 2, 4, EnumCreatureType.monster, BiomeGenBase.mushroomIsland);
@@ -374,14 +424,80 @@ public class DecayingWorld
             MystAPI.instability.registerInstability(new EffectDenseFogProvider());
             MystAPI.instability.registerInstability(new EffectPositiveEnergyProvider());
             MystAPI.instability.registerInstability(new EffectNegativeEnergyProvider());
+            MystAPI.instability.registerInstability(new EffectUnstableDecayProvider());
+            MystAPI.instability.registerInstability(new EffectBrittleDecayProvider());
+            MystAPI.instability.registerInstability(new EffectNitroProvider());
             MystAPI.symbol.registerWord("Puzzle", new DrawableWord(new Integer[] {4, 5, 6, 7, 11, 12, 14, 17, 20, 22}));
             MystAPI.symbol.registerWord("Death", new DrawableWord(new Integer[] {4, 5, 9, 12, 14, 15}));
             MystAPI.symbol.registerWord("Life", new DrawableWord(new Integer[] {6, 7, 19, 20, 21, 22}));
             MystAPI.symbol.registerWord("Contain", new DrawableWord(new Integer[] {4, 5, 6, 7, 9, 13, 19, 23, 40, 41, 42, 43, 44}));
+            
+            /*ItemStack items = new ItemStack(Item.emerald, 15);
+            IAgeSymbol symbol = new SymbolMaze();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolWorm();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolFrozen();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolExtremeTemperatures();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolGlow();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolSilver();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolSmog();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolDenseFog();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolMethane();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.4F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			items = new ItemStack(Item.emerald, 30);
+			symbol = new SymbolMolten();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.2F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolPositiveEnergy();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.1F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);
+			symbol = new SymbolNegativeEnergy();
+            MystAPI.symbol.registerSymbol(symbol, true);
+            MystAPI.symbolValues.setSymbolIsTradable(symbol, true);
+			MystAPI.symbolValues.setSymbolItemRarity(symbol, 0.1F);
+			MystAPI.symbolValues.setSymbolTradeItem(symbol, items);*/
             MystAPI.symbol.registerSymbol(new SymbolMaze(), true);
             MystAPI.symbol.registerSymbol(new SymbolWorm(), true);
             MystAPI.symbol.registerSymbol(new SymbolFrozen(), true);
-            MystAPI.symbol.registerSymbol(new SymbolExtremeTemperatures(), true);
+	        MystAPI.symbol.registerSymbol(new SymbolExtremeTemperatures(), true);
             MystAPI.symbol.registerSymbol(new SymbolMolten(), true);
             MystAPI.symbol.registerSymbol(new SymbolGlow(), true);
             MystAPI.symbol.registerSymbol(new SymbolSilver(), true);
@@ -395,15 +511,15 @@ public class DecayingWorld
 				//MystAPI.symbol.registerSymbol(new SymbolModifiable());
 			}
 			
-			Field[] f = MystAPI.class.getDeclaredFields();
+			/*Field[] f = MystAPI.class.getDeclaredFields();
 			boolean hasGrammar = false;
 			for(int fi=0; fi < f.length; fi++) {
 				if(f[fi].getName() == "grammar") {
 					hasGrammar = true;
 				}
-			}
-			System.out.println("MystAPI has grammar: " + hasGrammar);
-			if(hasGrammar && useGrammar && MystAPI.grammar != null) {
+			}*/
+			//System.out.println("MystAPI has grammar: " + hasGrammar);
+			if(MystAPI.grammar != null) {
 				MystAPI.grammar.registerGrammarRule("Populator", 0.5F, new String[] {"Populator","DecaySelection"});
 
 				MystAPI.grammar.registerGrammarRule("DecaySelection", 2.0F, new String[] {"DecaySilver"});
@@ -422,20 +538,21 @@ public class DecayingWorld
         {
             starFissure = Block.endPortal;
         }
-
-        overlayGui = new OverhealGUI();
-        TickRegistry.registerTickHandler(overlayGui, Side.CLIENT);
+        //System.out.println("Finished loading DecayingWorld");
         MinecraftForge.EVENT_BUS.register(new EventHandlers());
     }
 
-    @PostInit
+    @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-    	
+    	//System.out.println("PostInit DecayingWorld");
+    	proxy.registerRenders();
+    	((ChaosDecay)(rawChaos)).setupIDs();
     }
 
     private void shardRecipes()
     {
+    	System.out.println("Shard Recipe Construction");
         ItemStack oneShard = new ItemStack(iceIXshard);
         ItemStack bottle = new ItemStack(Item.glassBottle);
         ItemStack IXbottle1 = new ItemStack(iceIXbottle, 1, 16);
@@ -556,10 +673,204 @@ public class DecayingWorld
         GameRegistry.addShapelessRecipe(IXbottle16, oneShard, oneShard, IXbottle14);
     }
 
-    public static boolean evilmobs(EntityLiving var5) {
+    public static boolean evilmobs(EntityLivingBase var5) {
     	return (var5 instanceof EntitySkeleton || var5 instanceof EntityZombie || var5 instanceof EntityGhast || var5 instanceof EntityPigZombie);
     }
-    public static boolean goodmobs(EntityLiving var5) {
+    public static boolean goodmobs(EntityLivingBase var5) {
     	return (var5 instanceof EntityTreant || var5 instanceof EntityBlinkDog || var5 instanceof EntityEmpyreal || var5 instanceof EntityFooDog);
     }
+
+    public static void drawLine3D(World world, int block, int x1, int y1, int z1, int x2, int y2, int z2) {
+    	drawLine3D(world, block, x1, y1, z1, x2, y2, z2, false, false);
+    }
+
+    public static void drawLine3D(World world, int block, int x1, int y1, int z1, int x2, int y2, int z2, boolean incremental) {
+    	drawLine3D(world, block, x1, y1, z1, x2, y2, z2, incremental, false);
+    }
+    
+    public static void drawLine3D(World world, int block, int x1, int y1, int z1, int x2, int y2, int z2, boolean incremental, boolean resist) {
+    	int i, dx, dy, dz, m, n, x_inc, y_inc, z_inc,err_1, err_2, dx2, dy2, dz2, l;
+    	float ll;
+    	int pixel[] = new int[3];
+    	pixel[0] = x1;
+    	pixel[1] = y1;
+    	pixel[2] = z1;
+		dx = x2 - x1;
+		dy = y2 - y1;
+		dz = z2 - z1;
+		x_inc = (dx < 0) ? -1 : 1;
+		l = Math.abs(dx);
+		y_inc = (dy < 0) ? -1 : 1;
+		m = Math.abs(dy);
+		z_inc = (dz < 0) ? -1 : 1;
+		n = Math.abs(dz);
+		dx2 = l << 1;
+		dy2 = m << 1;
+		dz2 = n << 1;
+		float res = 0; 
+		if ((l >= m) && (l >= n)) {
+		    err_1 = dy2 - l;
+		    err_2 = dz2 - l;
+			ll = l;
+		    for (i = 0; i < ll; i++) {
+		    	res = PUT_PIXEL(world, block, pixel);
+		        if (err_1 > 0) {
+		            pixel[1] += y_inc;
+		            err_1 -= dx2;
+		        }
+		        if (err_2 > 0) {
+		            pixel[2] += z_inc;
+		            err_2 -= dx2;
+		        }
+		        err_1 += dy2;
+		        err_2 += dz2;
+		        pixel[0] += x_inc;
+		        ll -= res;
+		    }
+		} else if ((m >= l) && (m >= n)) {
+		    err_1 = dx2 - m;
+		    err_2 = dz2 - m;
+		    ll = m;
+		    for (i = 0; i < ll; i++) {
+		    	res = PUT_PIXEL(world, block, pixel);
+		        if (err_1 > 0) {
+		            pixel[0] += x_inc;
+		            err_1 -= dy2;
+		        }
+		        if (err_2 > 0) {
+		            pixel[2] += z_inc;
+		            err_2 -= dy2;
+		        }
+		        err_1 += dx2;
+		        err_2 += dz2;
+		        pixel[1] += y_inc;
+		        ll -= res;
+		    }
+		} else {
+		    err_1 = dy2 - n;
+		    err_2 = dx2 - n;
+		    ll = n;
+		    for (i = 0; i < ll; i++) {
+		    	res = PUT_PIXEL(world, block, pixel);
+		        if (err_1 > 0) {
+		            pixel[1] += y_inc;
+		            err_1 -= dz2;
+		        }
+		        if (err_2 > 0) {
+		            pixel[0] += x_inc;
+		            err_2 -= dz2;
+		        }
+		        err_1 += dy2;
+		        err_2 += dx2;
+		        pixel[2] += z_inc;
+		        ll -= res;
+		    }
+		}
+		PUT_PIXEL(world, block, pixel);
+    }
+    
+    private static float PUT_PIXEL(World w, int b, int[] p) {
+    	return PUT_PIXEL(w, b, p, false);
+    }
+    
+    private static float PUT_PIXEL(World w, int b, int[] p, boolean inc) {
+    	int s = w.getBlockId(p[0], p[1], p[2]);
+    	float r = 1000;
+    	if(s == Block.stone.blockID || s == stoneUnst.blockID || s == Block.glass.blockID) {
+    		r = Block.blocksList[s].blockResistance;
+    		w.setBlock(p[0], p[1], p[2], b);
+    	}
+    	if(inc) {
+    		if(s == b) {
+        		r = Block.blocksList[s].blockResistance;
+    			w.setBlock(p[0], p[1], p[2], b+1);
+    		}
+    		else if(s == b+1) {
+        		r = Block.blocksList[s].blockResistance;
+    			w.setBlock(p[0], p[1], p[2], b+2);
+    		}
+    	}
+    	return r / 10.0F;
+    }
+    
+    public static void damageNeighbors(World world, int x, int y, int z) {
+    	int s = world.getBlockId(x+1, y, z);
+    	if(s == Block.stone.blockID) {
+    		s = DecayingWorld.stoneUnst.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneUnst.blockID) {
+    		s = DecayingWorld.stoneFrac.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneFrac.blockID) {
+    		s = DecayingWorld.stoneBroke.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneBroke.blockID || s == Block.cobblestone.blockID) {
+    		s = DecayingWorld.stoneCobble.blockID;
+    	}
+    	world.setBlock(x+1, y, z, s);
+    	
+    	s = world.getBlockId(x-1, y, z);
+    	if(s == Block.stone.blockID) {
+    		s = DecayingWorld.stoneUnst.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneUnst.blockID) {
+    		s = DecayingWorld.stoneFrac.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneFrac.blockID) {
+    		s = DecayingWorld.stoneBroke.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneBroke.blockID || s == Block.cobblestone.blockID) {
+    		s = DecayingWorld.stoneCobble.blockID;
+    	}
+    	world.setBlock(x-1, y, z, s);
+    	
+    	s = world.getBlockId(x, y, z+1);
+    	if(s == Block.stone.blockID) {
+    		s = DecayingWorld.stoneUnst.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneUnst.blockID) {
+    		s = DecayingWorld.stoneFrac.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneFrac.blockID) {
+    		s = DecayingWorld.stoneBroke.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneBroke.blockID || s == Block.cobblestone.blockID) {
+    		s = DecayingWorld.stoneCobble.blockID;
+    	}
+    	world.setBlock(x, y, z+1, s);
+    	
+    	s = world.getBlockId(x, y, z-1);
+    	if(s == Block.stone.blockID) {
+    		s = DecayingWorld.stoneUnst.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneUnst.blockID) {
+    		s = DecayingWorld.stoneFrac.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneFrac.blockID) {
+    		s = DecayingWorld.stoneBroke.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneBroke.blockID || s == Block.cobblestone.blockID) {
+    		s = DecayingWorld.stoneCobble.blockID;
+    	}
+    	world.setBlock(x, y, z-1, s);
+    	
+    	s = world.getBlockId(x, y+1, z);
+    	if(s == Block.stone.blockID) {
+    		s = DecayingWorld.stoneUnst.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneUnst.blockID) {
+    		s = DecayingWorld.stoneFrac.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneFrac.blockID) {
+    		s = DecayingWorld.stoneBroke.blockID;
+    	}
+    	else if(s == DecayingWorld.stoneBroke.blockID || s == Block.cobblestone.blockID) {
+    		s = DecayingWorld.stoneCobble.blockID;
+    	}
+    	world.setBlock(x, y+1, z, s);
+    	//if(world.isRemote) {
+    		world.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "decayingworld:rock", 0.5F, world.rand.nextFloat() * 0.25F + 0.6F);
+    	//}
+    }
+    
 }

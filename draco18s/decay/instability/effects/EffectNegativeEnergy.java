@@ -93,10 +93,10 @@ public class EffectNegativeEnergy implements IEnvironmentalEffect
 	                                timer = new Random().nextInt(60);
 	                            }
 
-	                            int hp = ((EntityLiving)e).getHealth();
-	                            int mhp = ((EntityLiving)e).getMaxHealth();
-	                            int newhp = hp;
-	                            int newhpo = hpo;
+	                            float hp = ((EntityLiving)e).getHealth();
+	                            float mhp = ((EntityLiving)e).getMaxHealth();
+	                            float newhp = hp;
+	                            float newhpo = hpo;
 
 	                            if (hp < mhp)
 	                            {
@@ -105,7 +105,7 @@ public class EffectNegativeEnergy implements IEnvironmentalEffect
 	                                ((EntityLiving)e).heal(newhp - hp);
 	                            }
 
-	                            nbt.setInteger("HealthOverflow", newhpo);
+	                            nbt.setFloat("HealthOverflow", newhpo);
 	                            nbt.setInteger("ExpDrainTimer", timer);
 	                        }
 

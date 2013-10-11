@@ -120,7 +120,7 @@ public class ModelBlinkDog extends ModelBase
     {
     	EntityBlinkDog entitywolf = (EntityBlinkDog)par1EntityLiving;
 
-        this.wolfTail.rotateAngleY = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
+    	this.wolfTail.rotateAngleY = 0.0F;
 
         this.wolfBody.setRotationPoint(0.0F, 14.0F, 2.0F);
         this.wolfBody.rotateAngleX = ((float)Math.PI / 2F);

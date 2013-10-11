@@ -24,6 +24,10 @@ public class EntitySolidifier extends EntityThrowable implements IThrowableEntit
 		super(par1World);
 	}
 
+	public EntitySolidifier(World par2World, EntityPlayer par3EntityPlayer) {
+		super(par2World, par3EntityPlayer);
+	}
+
 	@Override
 	public void setThrower(Entity entity) {
 	}

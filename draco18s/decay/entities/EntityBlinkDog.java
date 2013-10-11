@@ -1,12 +1,14 @@
 package draco18s.decay.entities;
 
+import java.util.UUID;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCloth;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBeg;
@@ -23,6 +25,8 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.player.EntityPlayer;
@@ -61,18 +65,17 @@ public class EntityBlinkDog extends EntityMob
     public EntityBlinkDog(World par1World)
     {
         super(par1World);
-        this.texture = "/mods/DecayingWorld/textures/mob/blinkdog.png";
         this.setSize(0.6F, 0.8F);
-        this.moveSpeed = 0.3F;
+        //this.moveSpeed = 0.3F;
         this.getNavigator().setAvoidsWater(true);
         this.tasks.addTask(1, new EntityAISwimming(this));
         this.tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
-        this.tasks.addTask(3, new EntityAIAttackOnCollide(this, this.moveSpeed, true));
-        this.tasks.addTask(4, new EntityAIWander(this, this.moveSpeed));
+        this.tasks.addTask(3, new EntityAIAttackOnCollide(this, 0.3D, true));
+        this.tasks.addTask(4, new EntityAIWander(this, 0.3D));
         this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(6, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
         tpknockback = false;
     }
 
@@ -97,18 +100,25 @@ public class EntityBlinkDog extends EntityMob
      */
     protected void updateAITick()
     {
-        this.dataWatcher.updateObject(18, Integer.valueOf(this.getHealth()));
+        this.dataWatcher.updateObject(18, Float.valueOf(this.getHealth()));
     }
 
-    public int getMaxHealth()
+    /*public float getMaxHealth()
     {
         return 15;
+    }*/
+    
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(15.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.3D);
     }
 
     protected void entityInit()
     {
         super.entityInit();
-        this.dataWatcher.addObject(18, new Integer(this.getHealth()));
+        this.dataWatcher.addObject(18, new Float(this.getHealth()));
     }
 
     /**
@@ -117,16 +127,6 @@ public class EntityBlinkDog extends EntityMob
     protected void playStepSound(int par1, int par2, int par3, int par4)
     {
         this.playSound("mob.wolf.step", 0.15F, 1.0F);
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        return this.texture;
     }
 
     /**
@@ -390,7 +390,7 @@ public class EntityBlinkDog extends EntityMob
         }
     }
 
-    @Override
+    /*@Override
     public void knockBack(Entity par1Entity, int par2, double par3, double par5)
     {
     	if(!tpknockback) {
@@ -410,7 +410,7 @@ public class EntityBlinkDog extends EntityMob
 	        }
     	}
     	tpknockback = false;
-    }
+    }*/
 
     protected boolean teleportRandomly()
     {

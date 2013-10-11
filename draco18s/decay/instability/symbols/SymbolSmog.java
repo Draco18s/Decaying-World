@@ -12,11 +12,11 @@ public class SymbolSmog implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 2;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -48,4 +48,9 @@ public class SymbolSmog implements IAgeSymbol
         String[] str = {"Inhibit", "Life", "Sacrifice", "Balance"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

@@ -10,22 +10,29 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import draco18s.decay.DecayingWorld;
 import draco18s.decay.PositiveDamage;
 
+@SideOnly(Side.CLIENT)
 public class OverhealGUI implements ITickHandler
 {
     public Minecraft mc;
-    public int playerOverflowHp = 0;
+    public float playerOverflowHp = 0;
     public int flag = 0;
     public int thisFreezeTimer = 0;
     public int lastFreezeTimer = 0;
+    private ResourceLocation guiTex;
 
     public OverhealGUI()
     {
         mc = Minecraft.getMinecraft();
+        guiTex = new ResourceLocation("decayingWorld:textures/gui/gui.png");
     }
 
     @Override
@@ -34,9 +41,10 @@ public class OverhealGUI implements ITickHandler
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void tickEnd(EnumSet<TickType> type, Object... tickData)
     {
-        ScaledResolution scaledresolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+    	ScaledResolution scaledresolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
         FontRenderer fontrenderer = mc.fontRenderer;
         int width = scaledresolution.getScaledWidth();
         int height = scaledresolution.getScaledHeight();
@@ -62,14 +70,16 @@ public class OverhealGUI implements ITickHandler
         return "OverhealBar";
     }
 
+    @SideOnly(Side.CLIENT)
     public void onRenderTick()
     {
         if (mc.currentScreen == null && !mc.thePlayer.capabilities.isCreativeMode)
         {
+        	int n = 0;
+        	this.mc.renderEngine.bindTexture(guiTex);
             GuiIngame gui = this.mc.ingameGUI;
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/mods/DecayingWorld/textures/gui/gui.png"));
             //System.out.println("Current hp: " + mc.thePlayer.getHealth());
-            int hpo = playerOverflowHp;
+            float hpo = playerOverflowHp;
             //hpo = 5;
             int u = (int)((double)hpo / 40 * 81);
 
@@ -133,7 +143,7 @@ public class OverhealGUI implements ITickHandler
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 GL11.glDisable(GL11.GL_ALPHA_TEST);
-                this.mc.renderEngine.bindTexture("/mods/DecayingWorld/textures/gui/gui.png");
+                this.mc.renderEngine.bindTexture(guiTex);
                 Tessellator tessellator = Tessellator.instance;
                 tessellator.startDrawingQuads();
                 tessellator.addVertexWithUV(0.0D,      (double)l, -90.0D, minU, maxV);

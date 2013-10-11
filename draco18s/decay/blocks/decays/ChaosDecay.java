@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import draco18s.decay.ColdDamage;
 
 import net.minecraft.block.Block;
@@ -39,7 +42,7 @@ public class ChaosDecay extends BaseFogDecay
         setTickRandomly(true);
         setCreativeTab(CreativeTabs.tabBlock);
     }
-
+    
     public void setupIDs() {
     	for(int v=0; v < 5; v++){
 			validIDs.add((short)1);
@@ -72,8 +75,8 @@ public class ChaosDecay extends BaseFogDecay
 		}
 		for(int b=Block.blocksList.length-1; b>= 0; b--) {
 			if(Block.blocksList[b] != null) {
-    			Icon ic = Block.blocksList[b].getIcon(0, 0);
-    			if(ic != null)
+    			float hard = Block.blocksList[b].blockHardness;
+    			if(hard > 0.0F)
     				validIDs.add((short) b);
 			}
 		}

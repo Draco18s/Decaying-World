@@ -61,7 +61,8 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 
 			//if(b.biomeID > 22) {
 				ch = (chunkX * chunkX + chunkZ * chunkZ + worldObj.provider.dimensionId + (int)Math.pow(chunkX * chunkZ, 3)) % (37 + chunkZ % 5);
-				if(b.getFloatRainfall() < 0.35 || b.getFloatTemperature() >= 0.8) {
+				//System.out.println("Positive Energy Populate");
+				if(b.rainfall < 0.35 || b.temperature >= 0.8) {
 					ch++;
 				}
 				if(ch == 0) {
@@ -194,7 +195,7 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 						{
 							EntityLiving var5 = (EntityLiving)e;
 							NBTTagCompound nbt = var5.getEntityData();
-							int hpo = nbt.getInteger("HealthOverflow");
+							float hpo = nbt.getFloat("HealthOverflow");
 							int timer = nbt.getInteger("HealthOverflowTimer");
 							if (timer < 0) {
 								timer = 0;
@@ -211,7 +212,7 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 							}
 							//System.out.println("Timer:  " +timer);
 							//System.out.println("HPO:    " +hpo);
-							int hp = var5.getHealth();
+							float hp = var5.getHealth();
 							if (timer > 180)
 							{
 								if(DecayingWorld.evilmobs(var5)) {
@@ -228,9 +229,9 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 								}
 							}
 
-							int mhp = var5.getMaxHealth();
-							int newhp = hp;
-							int newhpo = hpo;
+							float mhp = var5.getMaxHealth();
+							float newhp = hp;
+							float newhpo = hpo;
 
 							if (hp < mhp && !DecayingWorld.evilmobs(var5))
 							{
@@ -251,7 +252,7 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 								}
 							}
 
-							nbt.setInteger("HealthOverflow", newhpo);
+							nbt.setFloat("HealthOverflow", newhpo);
 							nbt.setInteger("HealthOverflowTimer", timer);
 							nbt.setBoolean("TempDecay", true);
 
@@ -262,7 +263,7 @@ public class EffectPositiveEnergy implements IEnvironmentalEffect
 								try
 								{
 									out.writeInt(1);
-									out.writeInt(newhpo);
+									out.writeFloat(newhpo);
 									Packet250CustomPayload packet = new Packet250CustomPayload("MoreDecay", bt.toByteArray());
 									Player player = (Player)e;
 									PacketDispatcher.sendPacketToPlayer(packet, player);

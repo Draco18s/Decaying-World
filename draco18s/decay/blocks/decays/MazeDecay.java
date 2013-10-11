@@ -603,7 +603,7 @@ public class MazeDecay extends Block
 
                                     if (var19 != null)
                                     {
-                                        var19.func_98049_a().setMobID("Skeleton");
+                                        var19.getSpawnerLogic().setMobID("Skeleton");
                                     }
 
                                     world.setBlock(x + 1, y + 1, z, Block.chest.blockID);
@@ -721,7 +721,7 @@ public class MazeDecay extends Block
 
                                     if (var19 != null)
                                     {
-                                        var19.func_98049_a().setMobID("Skeleton");
+                                        var19.getSpawnerLogic().setMobID("Skeleton");
                                     }
 
                                     world.setBlock(x, y + 1, z + 1, Block.chest.blockID);
@@ -839,7 +839,7 @@ public class MazeDecay extends Block
 
                                     if (var19 != null)
                                     {
-                                        var19.func_98049_a().setMobID("Skeleton");
+                                        var19.getSpawnerLogic().setMobID("Skeleton");
                                     }
 
                                     world.setBlock(x, y + 1, z - 1, Block.chest.blockID);
@@ -957,7 +957,7 @@ public class MazeDecay extends Block
 
                                     if (var19 != null)
                                     {
-                                        var19.func_98049_a().setMobID("Skeleton");
+                                        var19.getSpawnerLogic().setMobID("Skeleton");
                                     }
 
                                     world.setBlock(x - 1, y + 1, z, Block.chest.blockID);

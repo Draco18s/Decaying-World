@@ -1,4 +1,4 @@
-package draco18s.decay.blocks.decays;
+package draco18s.decay.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public class DenseAirDecay extends BlockSand
+public class Methane extends BlockSand
 {
-    public DenseAirDecay(int par1)
+    public Methane(int par1)
     {
         super(par1, Material.air);
         setHardness(-1F);
@@ -39,7 +39,7 @@ public class DenseAirDecay extends BlockSand
         setLightOpacity(0);
         setTickRandomly(true);
         disableStats();
-        setCreativeTab(CreativeTabs.tabBlock);
+        //setCreativeTab(CreativeTabs.tabBlock);
         setResistance(-1.2F);
     }
 
@@ -52,7 +52,7 @@ public class DenseAirDecay extends BlockSand
     @Override
     public void registerIcons(IconRegister iconRegister)
     {
-        blockIcon = iconRegister.registerIcon("DecayingWorld:methane");
+        blockIcon = iconRegister.registerIcon("DecayingWorld:methane_solid");
     }
 
     @Override
@@ -79,8 +79,6 @@ public class DenseAirDecay extends BlockSand
         if (c > 0)
         {
             world.setBlockToAir(x, y, z);
-
-            //System.out.println("Falling: " + c + " (" + (c % 2) + ")");
             if (c % 2 == 1)
             {
                 world.setBlock(x, y - 1, z, blockID, 0, 2);
@@ -203,7 +201,7 @@ public class DenseAirDecay extends BlockSand
                 return;
             }
 
-            //world.canLightningStrikeAt(x, y, z);
+            /*//world.canLightningStrikeAt(x, y, z);
             if (wID[2] == 0 && !world.canBlockSeeTheSky(x, y + 1, z))
             {
                 double m = 0.4;
@@ -252,7 +250,7 @@ public class DenseAirDecay extends BlockSand
                 {
                     world.setBlock(x, y, z - 1, random.nextDouble() > m ? 0 : blockID, 0, 2);
                 }
-            }
+            }*/
         }
     }
 

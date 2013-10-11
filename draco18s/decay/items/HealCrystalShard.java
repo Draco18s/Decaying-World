@@ -47,7 +47,7 @@ public class HealCrystalShard extends Item
         {
         	EntityPlayer var5 = (EntityPlayer)par3Entity;
             NBTTagCompound nbt = var5.getEntityData();
-            int hpo = nbt.getInteger("HealthOverflow");
+            float hpo = nbt.getFloat("HealthOverflow");
             int timer = Math.max(nbt.getInteger("HealthOverflowTimer"), 0) + 1;
 
             if (timer > 180)
@@ -56,10 +56,10 @@ public class HealCrystalShard extends Item
                 timer = new Random().nextInt(60);
             }
 
-            int hp = var5.getHealth();
-            int mhp = var5.getMaxHealth();
-            int newhp = hp;
-            int newhpo = hpo;
+            float hp = var5.getHealth();
+            float mhp = var5.getMaxHealth();
+            float newhp = hp;
+            float newhpo = hpo;
 
             if (hp < mhp)
             {
@@ -68,7 +68,7 @@ public class HealCrystalShard extends Item
                 var5.heal(newhp - hp);
             }
 
-            nbt.setInteger("HealthOverflow", newhpo);
+            nbt.setFloat("HealthOverflow", newhpo);
             nbt.setInteger("HealthOverflowTimer", timer);
 
             ByteArrayOutputStream bt = new ByteArrayOutputStream();
@@ -77,7 +77,7 @@ public class HealCrystalShard extends Item
             try
             {
                 out.writeInt(1);
-                out.writeInt(newhpo);
+                out.writeFloat(newhpo);
                 Packet250CustomPayload packet = new Packet250CustomPayload("MoreDecay", bt.toByteArray());
                 PacketDispatcher.sendPacketToAllAround(var5.posX, var5.posY, var5.posZ, 0.01, var5.worldObj.provider.dimensionId, packet);
             }

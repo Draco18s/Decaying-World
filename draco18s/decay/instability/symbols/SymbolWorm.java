@@ -2,9 +2,11 @@ package draco18s.decay.instability.symbols;
 
 import net.minecraft.block.Block;
 
+import com.xcompwiz.mystcraft.api.internals.BlockCategory;
 import com.xcompwiz.mystcraft.api.internals.BlockDescriptor;
 import com.xcompwiz.mystcraft.api.symbol.IAgeController;
 import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
+import com.xcompwiz.mystcraft.api.symbol.ModifierUtils;
 
 import draco18s.decay.instability.effects.EffectWormDecay;
 
@@ -12,16 +14,16 @@ public class SymbolWorm implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 2;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
     {
-        BlockDescriptor blockDescriptor = BlockDescriptor.popBlockOfType(controller, "STRUCTURE");
+        BlockDescriptor blockDescriptor = ModifierUtils.popBlockOfType(controller, BlockCategory.STRUCTURE);
         EffectWormDecay feature;
 
         if (blockDescriptor != null)
@@ -69,4 +71,9 @@ public class SymbolWorm implements IAgeSymbol
         String[] str = {"Chaos", "Motion", "Form", "Flow"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

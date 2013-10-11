@@ -14,10 +14,10 @@ public class PositiveDamage extends DamageSource
         setMagicDamage();
     }
 
-    @Override
+    /*@Override
     public String getDeathMessage(EntityLiving par1EntityLiving)
     {
         EntityPlayer par1EntityPlayer = (EntityPlayer)par1EntityLiving;
         return par1EntityPlayer.username + " expired from over-healing.";
-    }
+    }*/
 }

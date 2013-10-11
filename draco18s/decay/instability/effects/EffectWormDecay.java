@@ -57,7 +57,7 @@ public class EffectWormDecay implements IEnvironmentalEffect
             y = random.nextInt(r) + 1;
             world.setBlock(wx + x, y, wz + z, DecayingWorld.wormDecay.blockID, random.nextInt(16), 3);
             MaterialEntity ent = (MaterialEntity)world.getBlockTileEntity(wx + x, y, wz + z);
-            //System.out.println(materialID + ":" + materialMeta + "," + randInt + " worm at " + (wx+x) + "," + y + "," + (wz+z));
+            System.out.println(materialID + ":" + materialMeta + "," + randInt + " worm at " + (wx+x) + "," + y + "," + (wz+z));
             ent.materialBlockID = materialID;
             ent.materialBlockMeta = materialMeta;
         }

@@ -20,7 +20,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -78,19 +78,19 @@ public class DeathCrystal extends BlockContainer
     {
         if (!worldObj.isRemote)
         {
-            if (e instanceof EntityLiving)
+            if (e instanceof EntityLivingBase)
             {
             	NBTTagCompound nbt = e.getEntityData();
                 int timer = Math.max(nbt.getInteger("ExpDrainTimer"), 0) + 2;
                 if (timer > 180) {
                 	timer = new Random().nextInt(60);
-                	EntityLiving var5 = (EntityLiving)e;
+                	EntityLivingBase var5 = (EntityLivingBase)e;
                 	if((DecayingWorld.evilmobs(var5))) {
-                		int hpo = nbt.getInteger("HealthOverflow");
-                		int mhp = var5.getMaxHealth();
+                		float hpo = nbt.getInteger("HealthOverflow");
+                		float mhp = var5.getMaxHealth();
                 		if(hpo > mhp*2)
                 			hpo = mhp*2;
-                		nbt.setInteger("HealthOverflow", hpo);
+                		nbt.setFloat("HealthOverflow", hpo);
                 	}
                 	else {
                 		e.attackEntityFrom(NegativeDamage.type, 1);

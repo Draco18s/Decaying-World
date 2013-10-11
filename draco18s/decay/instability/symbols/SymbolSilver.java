@@ -12,11 +12,11 @@ public class SymbolSilver implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 2;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -48,4 +48,9 @@ public class SymbolSilver implements IAgeSymbol
         String[] str = {"Nature", "Chaos", "Rebirth", "Sacrifice"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

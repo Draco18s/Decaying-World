@@ -3,6 +3,9 @@ package draco18s.decay.client;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -11,9 +14,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.potion.PotionHelper;
 import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
 
+@SideOnly(Side.CLIENT)
 public class RenderSolidifier extends Render {
     private Item theItem;
+	private static final ResourceLocation textures = new ResourceLocation("decayingworld:textures/items/lifebomb.png");
 
 	public RenderSolidifier(Item i) {
 		theItem = i;
@@ -33,7 +39,7 @@ public class RenderSolidifier extends Render {
             GL11.glTranslatef((float)d0, (float)d1, (float)d2);
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
             GL11.glScalef(0.5F, 0.5F, 0.5F);
-            loadTexture("/gui/items.png");//change this..?
+            bindTexture(textures);//change this..?
             Tessellator tessellator = Tessellator.instance;
             render(tessellator, icon);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -60,4 +66,9 @@ public class RenderSolidifier extends Render {
         par1Tessellator.addVertexWithUV((double)(0.0F - f5), (double)(f4 - f6), 0.0D, (double)f, (double)f2);
         par1Tessellator.draw();
     }
+
+	@Override
+	protected ResourceLocation getEntityTexture(Entity entity) {
+		return textures;
+	}
 }

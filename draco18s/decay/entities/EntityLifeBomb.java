@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -25,6 +26,10 @@ public class EntityLifeBomb extends EntityThrowable implements IThrowableEntity 
 
 	public EntityLifeBomb(World par1World) {
 		super(par1World);
+	}
+
+	public EntityLifeBomb(World par2World, EntityPlayer par3EntityPlayer) {
+		super(par2World, par3EntityPlayer);
 	}
 
 	@Override

@@ -13,11 +13,11 @@ public class SymbolDenseFog implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 10;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -60,4 +60,9 @@ public class SymbolDenseFog implements IAgeSymbol
         String[] str = {"Nature", "Ethereal", "Chaos", "Flow"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

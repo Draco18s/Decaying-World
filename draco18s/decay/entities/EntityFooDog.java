@@ -1,14 +1,15 @@
 package draco18s.decay.entities;
 
 import java.util.List;
+import java.util.UUID;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCloth;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIBeg;
@@ -17,7 +18,7 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAIMoveTwardsRestriction;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
@@ -26,7 +27,10 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -53,12 +57,12 @@ public class EntityFooDog extends EntityTameable
     private boolean field_70928_h;
 
     private boolean isSitting = false;
-    private EntityAIBase wanderTaskA = new EntityAIWander(this, 0.4F);
-    private EntityAIBase attackTaskA = new EntityAIAttackOnCollide(this, 0.4F, true);
-    private EntityAIBase navTaskA = new EntityAIMoveTwardsRestriction(this, 0.4F);
-    private EntityAIBase wanderTaskB = new EntityAIWander(this, 0.35F);
-    private EntityAIBase attackTaskB = new EntityAIAttackOnCollide(this, 0.35F, true);
-    private EntityAIBase navTaskB = new EntityAIMoveTwardsRestriction(this, 0.35F);
+    private EntityAIBase wanderTaskA = new EntityAIWander(this, 0.4D);
+    private EntityAIBase attackTaskA = new EntityAIAttackOnCollide(this, 0.4D, true);
+    private EntityAIBase navTaskA = new EntityAIMoveTowardsRestriction(this, 0.4D);
+    private EntityAIBase wanderTaskB = new EntityAIWander(this, 0.35D);
+    private EntityAIBase attackTaskB = new EntityAIAttackOnCollide(this, 0.35D, true);
+    private EntityAIBase navTaskB = new EntityAIMoveTowardsRestriction(this, 0.35D);
     private EntityAIBase leapTask = new EntityAILeapAtTarget(this, 0.65F);
     private EntityAIBase trackTask = new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F);
 
@@ -71,9 +75,9 @@ public class EntityFooDog extends EntityTameable
     public EntityFooDog(World par1World)
     {
         super(par1World);
-        this.texture = "/mods/DecayingWorld/textures/mob/foodog.png";
+        //this.texture = "/mods/DecayingWorld/textures/mob/foodog.png";
         this.setSize(0.6F, 0.8F);
-        this.moveSpeed = 0.28F;
+        //this.moveSpeed = 0.28F;
         this.getNavigator().setAvoidsWater(true);
         this.tasks.addTask(1, new EntityAISwimming(this));
         //this.tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
@@ -83,7 +87,7 @@ public class EntityFooDog extends EntityTameable
         //this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         //this.tasks.addTask(7, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true, true, IMob.mobSelector));
         setAngry(false);
     }
 
@@ -120,18 +124,24 @@ public class EntityFooDog extends EntityTameable
      */
     protected void updateAITick()
     {
-        this.dataWatcher.updateObject(18, Integer.valueOf(this.getHealth()));
+        this.dataWatcher.updateObject(18, Float.valueOf(this.getHealth()));
     }
 
-    public int getMaxHealth()
+    /*public flaot getMaxHealth()
     {
         return 40;
+    }*/
+    
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(40.0D);
     }
 
     protected void entityInit()
     {
         super.entityInit();
-        this.dataWatcher.addObject(18, new Integer(this.getHealth()));
+        this.dataWatcher.addObject(18, new Float(this.getHealth()));
         this.dataWatcher.addObject(20, new Byte((byte)3));
     }
 
@@ -158,7 +168,7 @@ public class EntityFooDog extends EntityTameable
     		return "/mods/DecayingWorld/textures/mob/stonedog.png";
     	}
     	else {
-    		return super.getTexture(); //foodog.png
+    		return "/mods/DecayingWorld/textures/mob/foodog.png"; //foodog.png
     	}
     }
 
@@ -274,9 +284,11 @@ public class EntityFooDog extends EntityTameable
         if(this.entityToAttack == null && this.findPlayerToAttack() == null) {
         	setAngry(false);
         }
+        //attributeinstance.removeModifier(babySpeedBoostModifier);
         switch(isStone()) {
         	case 1:
-	        	this.moveSpeed = 0.28F;
+	        	//this.moveSpeed = 0.28F;
+        		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.28D);
 	        	//this.addPotionEffect(new PotionEffect(Potion.resistance.getId(), 10, 0));
 	        	if(getHealth() <= getMaxHealth() / 2) {
 	        		setStone(2);
@@ -289,7 +301,8 @@ public class EntityFooDog extends EntityTameable
 	            }
 	        	break;
         	case 2:
-            	this.moveSpeed = 0.19F;
+            	//this.moveSpeed = 0.19F;
+        		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.19D);
             	this.addPotionEffect(new PotionEffect(Potion.resistance.getId(), 10, 3));
             	if(getHealth() == getMaxHealth()) {
             		setStone(1);
@@ -302,7 +315,8 @@ public class EntityFooDog extends EntityTameable
 	            }
             	break;
         	case 3:
-            	this.moveSpeed = 0.0F;
+            	//this.moveSpeed = 0.0F;
+        		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.0D);
             	AxisAlignedBB par2AxisAlignedBB = AxisAlignedBB.getBoundingBox(this.posX-16,this.posY-16,this.posZ-16,this.posX+16,this.posY+16,this.posZ+16);
             	List<EntityPlayer> ents = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, par2AxisAlignedBB);
             	if(ents.size() > 0) {
@@ -455,7 +469,9 @@ public class EntityFooDog extends EntityTameable
         			//System.out.println("Lost stone form");
             		setStone(1);
             		this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
-            		this.moveSpeed = 0.28F;
+
+            		AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+            		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.28D);
                     this.tasks.addTask(2, leapTask);
                     this.tasks.addTask(3, attackTaskA);
                     this.tasks.addTask(4, wanderTaskA);

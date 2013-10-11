@@ -12,11 +12,11 @@ public class SymbolExtremeTemperatures implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 5;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -59,4 +59,9 @@ public class SymbolExtremeTemperatures implements IAgeSymbol
         String[] str = {"Time", "System", "Cycle", "Energy"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

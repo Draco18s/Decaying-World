@@ -12,11 +12,11 @@ public class SymbolMethane implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 2;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -48,4 +48,9 @@ public class SymbolMethane implements IAgeSymbol
         String[] str = {"Contain", "Energy", "Inhibit", "Life"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

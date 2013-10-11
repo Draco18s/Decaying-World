@@ -15,13 +15,17 @@ public class EffectMethane implements IEnvironmentalEffect
     @Override
     public void onChunkPopulate(World world, Random rand, int wx, int wz)
     {
-        int ch = (wx * wx + wz * wz + (int)Math.pow(wx * wz + world.provider.dimensionId, 3)) % (27 + wx % 5);
+        int ch = (wx * wx + wz * wz + (int)Math.pow(wx * wz + world.provider.dimensionId, 3)) % (17 + wx % 5);
 
         if (ch == 0)
         {
             int x = rand.nextInt(16);
             int z = rand.nextInt(16);
             int y = getFirstAirBlock(world, wx + x, wz + z);
+            do {
+            	y++;
+            } while(world.getBlockId(x, y, z) != 0);
+            System.out.println("Methane emitter at (" + (wx + x) + "," + y + "," + (wz + z));
             world.setBlock(wx + x, y, wz + z, DecayingWorld.methanedecay.blockID);
         }
     }

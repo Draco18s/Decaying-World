@@ -12,11 +12,11 @@ public class SymbolPositiveEnergy implements IAgeSymbol
 {
     //boolean unstable = false;
 
-    @Override
+    /*@Override
     public float getRarity()
     {
         return 1;
-    }
+    }*/
 
     @Override
     public void registerLogic(IAgeController controller, long seed)
@@ -57,4 +57,9 @@ public class SymbolPositiveEnergy implements IAgeSymbol
         String[] str = {"System", "Encourage", "Infinity", "Energy"};
         return str;
     }
+
+	@Override
+	public float getRarity() {
+		return 0.4f;//getDescriptorWords
+	}
 }

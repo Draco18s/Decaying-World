@@ -128,6 +128,7 @@ public class DecayingWorld
 	        int intID = config.getBlock("WormyDecayI", 1557).getInt();
 	        int moltenDecayID = config.getBlock("moltenDecay", 1558).getInt();
 	        int volcanoID = config.getBlock("volcanoBlock", 1559).getInt();
+	        //1560?
 	        int iceIXid = config.getBlock("icenine", 1561).getInt();
 	        //int poisonWaterID = config.getBlock("poisonWater", 1562).getInt();
 	        //int poisonWater2ID = config.getBlock("poisonWaterFlowing", 1563).getInt();
@@ -138,8 +139,8 @@ public class DecayingWorld
 	        int smogID = config.getBlock("SmogDecay", 1568).getInt();
 	        int methID = config.getBlock("Methane", 1569).getInt();
 	        int fogID = config.getBlock("Fog", 1570).getInt();
-	        int pfogID = config.getBlock("Poison Fog", 1571).getInt();
-	        int sfogID = config.getBlock("Dense Fog", 1572).getInt();
+	        int pfogID = config.getBlock("PoisonFog", 1571).getInt();
+	        int sfogID = config.getBlock("DenseFog", 1572).getInt();
 	        int hcryID = config.getBlock("HealCrystal", 1573).getInt();
 	        int dcryID = config.getBlock("DeathCrystal", 1574).getInt();
 	        int rfogID = config.getBlock("rustFog", 1575).getInt();
@@ -299,12 +300,6 @@ public class DecayingWorld
 
         GameRegistry.registerTileEntity(MaterialEntity.class, "mazeMaterial");
         GameRegistry.registerTileEntity(DeathCryEnt.class, "deathCrystal");
-        RenderingRegistry.registerEntityRenderingHandler(EntitySolidifier.class, new RenderSnowball(solidifier));
-        RenderingRegistry.registerEntityRenderingHandler(EntityLifeBomb.class, new RenderSnowball(lifebomb));
-        RenderingRegistry.registerEntityRenderingHandler(EntityTreant.class, new RenderTreant());
-        RenderingRegistry.registerEntityRenderingHandler(EntityBlinkDog.class, new RenderBlinkDog());
-        RenderingRegistry.registerEntityRenderingHandler(EntityEmpyreal.class, new RenderEmpyreal());
-        RenderingRegistry.registerEntityRenderingHandler(EntityFooDog.class, new RenderFooDog());
         
         /*EntityRegistry.addSpawn(EntityBlinkDog.class, 8, 2, 4, EnumCreatureType.monster, BiomeGenBase.plains);
         EntityRegistry.addSpawn(EntityBlinkDog.class, 2, 2, 4, EnumCreatureType.monster, BiomeGenBase.mushroomIsland);
@@ -426,6 +421,7 @@ public class DecayingWorld
         overlayGui = new OverhealGUI();
         TickRegistry.registerTickHandler(overlayGui, Side.CLIENT);
         MinecraftForge.EVENT_BUS.register(new EventHandlers());
+        proxy.registerRenderers();
     }
 
     @PostInit

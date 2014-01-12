@@ -129,6 +129,12 @@ public class DecayingWorld
 
     public static CommonProxy proxy;
     
+    /*
+    I recommand putting all of these ints, blocks, items, and just registration lines within a seperate class file and
+    put make an init method within that class call all of these lines of code within that class. It would make the code look a lot
+    cleaner.
+    */
+    
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
